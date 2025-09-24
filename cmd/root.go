@@ -10,7 +10,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use: fmt.Sprintf("%s [commands] [flags] [values]", os.Args[0]),
-	Short: "Setup your gitignore and license files like using a lumberjack",
+	Short: "Set up your gitignore and license files like a lumberjack",
 	Version: "0.1.0",
 }
 
