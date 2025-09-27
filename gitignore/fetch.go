@@ -2,12 +2,12 @@ package gitignore
 
 const Repo = "github/gitignore"
 
-func FetchEmbedded(name string) (string, error) {
+func FetchEmbedded(name string) (string, string, error) {
 	// TODO
 	return "", nil
 }
 
-func FetchRepo(name string) (string, error) {
+func FetchRepo(name string) (string, string, error) {
 	// TODO
 	return "", nil
 }

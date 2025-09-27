@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -20,48 +21,69 @@ var (
 
 	dir					string
 
-	GitignoreCmd = &cobra.Command{
-		Use: "gitignore [flags] <name>",
-		Aliases: []string{ "g", "git", "i", "ignore" },
-		Short: "Create or append a `.gitignore` file in the project",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			if len(args) < 1 {
-				return fmt.Errorf("the name of the ignore type is required")
-			}
+	title				string
 
-			name := args[0]
-			var content		string
-			var err			error
+	noTitle				bool
 
-			var useNet		bool = forceNet
+	yes					bool
+)
 
-			if !forceNet {
-				// Try getting the embedded
-				content, err = lib.FetchEmbedded(name)
-				if err != nil {
-					if errors.Is(err, os.ErrNotExist) && allowNet {
-						useNet = true
-					} else {
-						return err
-					}
-				}
-			}
+var GitignoreCmd = &cobra.Command{
+	Use: "gitignore [flags [values]] <name>",
+	Aliases: []string{ "g", "git", "i", "ignore" },
+	Short: "Create or append a `.gitignore` file in the project",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return fmt.Errorf("the name of the ignore type is required")
+		}
 
-			if useNet {
-				content, err = lib.FetchRepo(name)
-				if err != nil {
+		name := args[0]
+
+		var filename	string
+		var content		string
+		var err			error
+
+		var useNet		bool = forceNet
+
+		if !forceNet {
+			// Try getting the embedded
+			filename, content, err = lib.FetchEmbedded(name)
+			if err != nil {
+				if errors.Is(err, os.ErrNotExist) && allowNet {
+					useNet = true
+				} else {
 					return err
 				}
 			}
+		}
 
-			if err := lib.SaveTo(dir, content, overwrite); err != nil {
+		if useNet {
+			filename, content, err = lib.FetchRepo(name)
+			if err != nil {
 				return err
 			}
+		}
 
-			return nil
-		},
-	}
-)
+		var title	string = title
+		if noTitle {
+			title = ""
+		} else if title == "" {
+			// E.g.,
+			// 1. Go.gitignore -> Go
+			// 2. Go.AllowList.gitignore -> Go
+			title, _, _ = strings.Cut(filename, ".")
+		}
+
+		if err := lib.SaveTo(dir, content, lib.SaveToOptions{
+			Overwrite: overwrite,
+			Title: title,
+		}); err != nil {
+			return err
+		}
+
+		return nil
+	},
+}
 
 func init() {
 	f := GitignoreCmd.PersistentFlags()
@@ -70,7 +92,7 @@ func init() {
 		&overwrite,
 		"overwrite", "o",
 		false,
-		"overwrite the existing ignore file instead of appending in it",
+		"overwrite the existing ignore file instead of appending the snippet in it",
 	)
 
 	f.BoolVarP(
@@ -92,5 +114,26 @@ func init() {
 		"dir", "d",
 		".",
 		"specify the directory where the ignore file resides",
+	)
+
+	f.StringVarP(
+		&title,
+		"title", "t",
+		"",
+		"specify a custom title for the snippet",
+	)
+
+	f.BoolVar(
+		&noTitle,
+		"no-title",
+		false,
+		"do not add title for the snippet",
+	)
+
+	f.BoolVarP(
+		&yes,
+		"yes", "y",
+		false,
+		"skip confirmations",
 	)
 }

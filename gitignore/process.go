@@ -1,24 +1,31 @@
 package gitignore
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 const GitIgnoreFileName = ".gitignore"
 
-func SaveTo(dir string, content string, overwrite bool) error {
+type SaveToOptions struct {
+	Overwrite		bool
+	Title		string
+}
+
+func SaveTo(dir string, content string, opts SaveToOptions) error {
 	path := filepath.Join(dir, GitIgnoreFileName)
 
-	fp, err := os.OpenFile(path, buildFileFlag(overwrite), 0666)
+	fp, err := os.OpenFile(path, buildFileFlag(opts.Overwrite), 0666)
 	if err != nil {
 		return err
 	}
 
 	defer fp.Close()
 
-	if !overwrite {
+	if !opts.Overwrite {
 		empty, err := isFileEmpty(fp)
 		if err != nil {
 			return err
@@ -32,8 +39,18 @@ func SaveTo(dir string, content string, overwrite bool) error {
 		}
 	}
 
-	if _, err := fp.WriteString(content); err != nil {
-		return err
+	// Write title
+	if title := opts.Title; title != "" {
+		if _, err := fmt.Fprintf(fp, "#-- %s --#\n\n", title); err != nil {
+			return err
+		}
+	}
+
+	// Write new content
+	if content := strings.TrimSpace(content); content != "" {
+		if _, err := fp.WriteString(content); err != nil {
+			return err
+		}
 	}
 
 	return nil
