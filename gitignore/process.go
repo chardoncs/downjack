@@ -16,6 +16,11 @@ type SaveToOptions struct {
 }
 
 func SaveTo(dir string, content string, opts SaveToOptions) error {
+	content = strings.TrimSpace(content)
+	if content == "" {
+		return nil
+	}
+
 	path := filepath.Join(dir, GitIgnoreFileName)
 
 	fp, err := os.OpenFile(path, buildFileFlag(opts.Overwrite), 0666)
@@ -47,10 +52,8 @@ func SaveTo(dir string, content string, opts SaveToOptions) error {
 	}
 
 	// Write new content
-	if content := strings.TrimSpace(content); content != "" {
-		if _, err := fp.WriteString(content); err != nil {
-			return err
-		}
+	if _, err := fp.WriteString(content); err != nil {
+		return err
 	}
 
 	return nil
