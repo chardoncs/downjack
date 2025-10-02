@@ -1,10 +1,7 @@
 package gitignore
 
 import (
-	"errors"
 	"fmt"
-	"os"
-	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -37,49 +34,52 @@ var GitignoreCmd = &cobra.Command{
 			return fmt.Errorf("the name of the ignore type is required")
 		}
 
-		name := args[0]
+		//name := args[0]
 
-		var filename	string
-		var content		string
-		var err			error
+		//var info		*lib.ReadInfo
+		//var err			error
 
-		var useNet		bool = forceNet
+		//var useNet		bool = forceNet
 
-		if !forceNet {
-			// Try getting the embedded
-			filename, content, err = lib.FetchEmbedded(name)
-			if err != nil {
-				if errors.Is(err, os.ErrNotExist) && allowNet {
-					useNet = true
-				} else {
-					return err
-				}
-			}
-		}
+		//if !forceNet {
+		//	// Try getting the embedded
+		//	info, err = lib.FetchEmbedded(name)
+		//	if err != nil {
+		//		if errors.Is(err, os.ErrNotExist) && allowNet {
+		//			useNet = true
+		//		} else {
+		//			return err
+		//		}
+		//	}
+		//}
 
-		if useNet {
-			filename, content, err = lib.FetchRepo(name)
-			if err != nil {
-				return err
-			}
-		}
+		//if useNet {
+		//	info, err = lib.FetchRepo(name)
+		//	if err != nil {
+		//		return err
+		//	}
+		//}
 
-		var title	string = title
-		if noTitle {
-			title = ""
-		} else if title == "" {
-			// E.g.,
-			// 1. Go.gitignore -> Go
-			// 2. Go.AllowList.gitignore -> Go
-			title, _, _ = strings.Cut(filename, ".")
-		}
+		//if info == nil {
+		//	return nil
+		//}
 
-		if err := lib.SaveTo(dir, content, lib.SaveToOptions{
-			Overwrite: overwrite,
-			Title: title,
-		}); err != nil {
-			return err
-		}
+		//var title	string = title
+		//if noTitle {
+		//	title = ""
+		//} else if title == "" {
+		//	// E.g.,
+		//	// 1. Go.gitignore -> Go
+		//	// 2. Go.AllowList.gitignore -> Go
+		//	title, _, _ = strings.Cut(info.Filename, ".")
+		//}
+
+		//if err := lib.SaveTo(dir, info.Content, lib.SaveToOptions{
+		//	Overwrite: overwrite,
+		//	Title: title,
+		//}); err != nil {
+		//	return err
+		//}
 
 		return nil
 	},
