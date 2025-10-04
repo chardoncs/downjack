@@ -35,14 +35,18 @@ func AskInt(prompt string, numRange ...int) (int, error) {
 		return invalid, fmt.Errorf("Too many arguments, expect 1~3, got %d", numLen + 1)
 	}
 
-	hasRange := low < high
+	hasRange := low <= high
 	if hasRange {
 		invalid = min(0, low - 1)
 	}
 
 	fmt.Printf("%s", prompt)
 	if hasRange {
-		fmt.Printf(" [%d-%d]", low, high)
+		if low == high {
+			fmt.Printf(" [%d]", low)
+		} else {
+			fmt.Printf(" [%d-%d]", low, high)
+		}
 	}
 	fmt.Print(": ")
 
@@ -54,7 +58,7 @@ func AskInt(prompt string, numRange ...int) (int, error) {
 		}
 
 		if hasRange && (num < low || num > high) {
-			return invalid, fmt.Errorf("The input number is out of range")
+			return num, fmt.Errorf("The input number is out of range")
 		}
 
 		return num, nil
