@@ -3,19 +3,14 @@ package gitignore
 import (
 	"errors"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
 
-const Repo = "github/gitignore"
-
-const dirPrefix = "./files"
-
 type SearchResult struct {
-	Paths			[]string
+	Filenames			[]string
 	IsExact			bool
 	// The content if it is an exact match
 	ExactContent	string
@@ -34,28 +29,21 @@ func SearchEmbed(keyword string) (*SearchResult, error) {
 	return result, nil
 }
 
-func SearchRemote(keyword string) (*SearchResult, error) {
-	// TODO: Remote search
-	return nil, nil
-}
-
 func exactMatchEmbedFile(keyword string) (*SearchResult, error) {
 	filename, err := constructPlausibleFilename(keyword)
 	if err != nil {
 		return nil, err
 	}
 
-	fullPath := filepath.Join(dirPrefix, filename)
-
-	content, err := root.ReadFile(fullPath)
+	content, err := ReadToString(filename)
 	if err != nil {
 		return nil, err
 	}
 
 	return &SearchResult{
-		Paths: []string{ fullPath },
+		Filenames: []string{ filename },
 		IsExact: true,
-		ExactContent: string(content),
+		ExactContent: content,
 	}, nil
 }
 
@@ -71,7 +59,7 @@ func searchEmbedDir(keyword string) (*SearchResult, error) {
 	}
 
 	matched := searchWords(keyword, names)
-	return &SearchResult{ Paths: matched }, nil
+	return &SearchResult{ Filenames: matched }, nil
 }
 
 func constructPlausibleFilename(name string) (string, error) {

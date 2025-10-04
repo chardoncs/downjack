@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/chardoncs/downjack/cmd/gitignore"
+	"github.com/chardoncs/downjack/internal/cli"
 	"github.com/spf13/cobra"
 )
 
@@ -13,7 +14,7 @@ var rootCmd = &cobra.Command{
 
 func Execute() {
 	err := rootCmd.Execute()
-	cobra.CheckErr(err)
+	cli.CheckErr(err)
 }
 
 func init() {

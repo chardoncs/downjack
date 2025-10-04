@@ -6,15 +6,11 @@ import (
 	"github.com/spf13/cobra"
 
 	lib "github.com/chardoncs/downjack/gitignore"
+	"github.com/chardoncs/downjack/internal/cli"
 )
-
-const repo = lib.Repo
 
 var (
 	overwrite			bool
-
-	allowNet			bool
-	forceNet			bool
 
 	dir					string
 
@@ -34,52 +30,66 @@ var GitignoreCmd = &cobra.Command{
 			return fmt.Errorf("the name of the ignore type is required")
 		}
 
-		//name := args[0]
+		name := args[0]
 
-		//var info		*lib.ReadInfo
-		//var err			error
+		result, err := lib.SearchEmbed(name)
+		if err != nil {
+			return err
+		}
 
-		//var useNet		bool = forceNet
+		if len(result.Filenames) < 1 {
+			return fmt.Errorf("No gitignore template named like \"%s\" found.", name)
+		}
 
-		//if !forceNet {
-		//	// Try getting the embedded
-		//	info, err = lib.FetchEmbedded(name)
-		//	if err != nil {
-		//		if errors.Is(err, os.ErrNotExist) && allowNet {
-		//			useNet = true
-		//		} else {
-		//			return err
-		//		}
-		//	}
-		//}
+		var content string
+		var filename string
 
-		//if useNet {
-		//	info, err = lib.FetchRepo(name)
-		//	if err != nil {
-		//		return err
-		//	}
-		//}
+		if result.IsExact {
+			filename = result.Filenames[0]
+			cli.Info("Found exact template: %s", filename)
 
-		//if info == nil {
-		//	return nil
-		//}
+			content = result.ExactContent
+		} else {
+			cli.Info("Found template(s):")
+			cli.PrintItems(result.Filenames)
 
-		//var title	string = title
-		//if noTitle {
-		//	title = ""
-		//} else if title == "" {
-		//	// E.g.,
-		//	// 1. Go.gitignore -> Go
-		//	// 2. Go.AllowList.gitignore -> Go
-		//	title, _, _ = strings.Cut(info.Filename, ".")
-		//}
+			if yes {
+				filename = result.Filenames[0]
+			} else {
+				fmt.Println()
 
-		//if err := lib.SaveTo(dir, info.Content, lib.SaveToOptions{
-		//	Overwrite: overwrite,
-		//	Title: title,
-		//}); err != nil {
-		//	return err
-		//}
+				input, err := cli.AskInt("Choose template", len(result.Filenames))
+				if err != nil {
+					return err
+				}
+
+				filename = result.Filenames[input - 1]
+			}
+
+			cli.Info("Selected %s", filename)
+
+			var err error
+			content, err = lib.ReadToString(filename)
+			if err != nil {
+				return err
+			}
+		}
+
+		var resultTitle string
+		if !noTitle {
+			if title == "" {
+				resultTitle = lib.GetFilePrefix(filename)
+			} else {
+				resultTitle = title
+			}
+		}
+
+		if err := lib.SaveTo(dir, content, lib.SaveToOptions{
+			Overwrite: overwrite,
+			Title: resultTitle,
+		}); err != nil {
+			return err
+		}
 
 		return nil
 	},
@@ -93,20 +103,6 @@ func init() {
 		"overwrite", "o",
 		false,
 		"overwrite the existing ignore file instead of appending the snippet in it",
-	)
-
-	f.BoolVarP(
-		&allowNet,
-		"net", "n",
-		false,
-		fmt.Sprintf("allow finding files from the online repo (namely `%s`) when there are no matched embedded files", repo),
-	)
-
-	f.BoolVarP(
-		&forceNet,
-		"force-net", "N",
-		false,
-		fmt.Sprintf("always find files from the online repo (namely `%s`) and ignore the embedded ones", repo),
 	)
 
 	f.StringVarP(
