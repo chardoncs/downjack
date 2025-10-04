@@ -77,7 +77,7 @@ func constructPlausibleFilename(name string) (string, error) {
 			if _, err := sb.WriteString(s); err != nil {
 				return "", err
 			}
-			continue
+			goto EndProc
 		}
 
 		if _, err := sb.WriteString(caser.String(s)); err != nil {
@@ -95,6 +95,12 @@ func constructPlausibleFilename(name string) (string, error) {
 		}
 	}
 
+	// Write suffix (if it's not `.gitignore`)
+	if _, err := sb.WriteString(".gitignore"); err != nil {
+		return "", err
+	}
+
+EndProc:
 	return sb.String(), nil
 }
 

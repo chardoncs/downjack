@@ -13,6 +13,19 @@ func Info(format string, a ...any) {
 	)
 }
 
+func InfoProgress(format string, a ...any) {
+	fmt.Print(
+		color.CyanString(">>"),
+		" ",
+		fmt.Sprintf(format, a...),
+		"... ",
+	)
+}
+
+func Done() {
+	fmt.Println("done")
+}
+
 func PrintItems(items []string) {
 	for i, item := range items {
 		fmt.Printf("%3d) %s\n", i + 1, item)

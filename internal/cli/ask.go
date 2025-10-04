@@ -6,7 +6,20 @@ import (
 	"math"
 	"os"
 	"strconv"
+	"strings"
 )
+
+func AskConfirm(prompt string) (confirmed bool) {
+	fmt.Printf("%s [Y/n]: ", prompt)
+
+	scanner := bufio.NewScanner(os.Stdin)
+	if scanner.Scan() {
+		result := strings.TrimSpace(scanner.Text())
+		confirmed = result == "" || strings.HasPrefix(strings.ToLower(result), "y")
+	}
+
+	return
+}
 
 func AskInt(prompt string, numRange ...int) (int, error) {
 	var low, high int = 1, 0

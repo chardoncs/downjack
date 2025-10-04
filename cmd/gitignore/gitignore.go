@@ -84,12 +84,17 @@ var GitignoreCmd = &cobra.Command{
 			}
 		}
 
+		cli.InfoProgress("Writing into .gitignore")
+
 		if err := lib.SaveTo(dir, content, lib.SaveToOptions{
 			Overwrite: overwrite,
 			Title: resultTitle,
 		}); err != nil {
+			fmt.Println()
 			return err
 		}
+
+		cli.Done()
 
 		return nil
 	},

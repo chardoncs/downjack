@@ -1,8 +1,8 @@
 package gitignore
 
 import (
+	"bufio"
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -23,22 +23,24 @@ func SaveTo(dir string, content string, opts SaveToOptions) error {
 
 	path := filepath.Join(dir, GitIgnoreFileName)
 
-	fp, err := os.OpenFile(path, buildFileFlag(opts.Overwrite), 0666)
+	file, err := os.OpenFile(path, buildFileFlag(opts.Overwrite), 0666)
 	if err != nil {
 		return err
 	}
 
-	defer fp.Close()
+	defer file.Close()
+
+	writer := bufio.NewWriter(file)
 
 	if !opts.Overwrite {
-		empty, err := isFileEmpty(fp)
+		empty, err := isFileEmpty(file)
 		if err != nil {
 			return err
 		}
 
 		if !empty {
 			// Add a blank line after the existing content
-			if _, err := fp.WriteString("\n\n"); err != nil {
+			if _, err := writer.WriteString("\n"); err != nil {
 				return err
 			}
 		}
@@ -46,13 +48,17 @@ func SaveTo(dir string, content string, opts SaveToOptions) error {
 
 	// Write title
 	if title := opts.Title; title != "" {
-		if _, err := fmt.Fprintf(fp, "#-- %s --#\n\n", title); err != nil {
+		if _, err := fmt.Fprintf(writer, "#-- %s --#\n\n", title); err != nil {
 			return err
 		}
 	}
 
 	// Write new content
-	if _, err := fp.WriteString(content); err != nil {
+	if _, err := writer.WriteString(content); err != nil {
+		return err
+	}
+
+	if err := writer.Flush(); err != nil {
 		return err
 	}
 
@@ -72,11 +78,10 @@ func buildFileFlag(overwrite bool) int {
 }
 
 func isFileEmpty(fp *os.File) (bool, error) {
-	size, err := fp.Seek(0, io.SeekCurrent)
+	stat, err := fp.Stat()
 	if err != nil {
 		return true, err
 	}
 
-	return size == 0, nil
+	return stat.Size() == 0, nil
 }
-
