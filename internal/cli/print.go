@@ -13,6 +13,14 @@ func Info(format string, a ...any) {
 	)
 }
 
+func Warning(format string, a ...any) {
+	fmt.Println(
+		color.YellowString(">>"),
+		color.New(color.Bold).Sprint("Warning:"),
+		fmt.Sprintf(format, a...),
+	)
+}
+
 func InfoProgress(format string, a ...any) {
 	fmt.Print(
 		color.CyanString(">>"),

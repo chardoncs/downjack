@@ -2,6 +2,7 @@ package gitignore
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 
@@ -11,13 +12,9 @@ import (
 
 var (
 	overwrite			bool
-
 	dir					string
-
 	title				string
-
 	noTitle				bool
-
 	yes					bool
 )
 
@@ -53,25 +50,40 @@ var GitignoreCmd = &cobra.Command{
 			cli.Info("Found template(s):")
 			cli.PrintItems(result.Filenames)
 
-			if yes {
-				filename = result.Filenames[0]
-			} else {
-				fmt.Println()
+			fmt.Println()
 
-				input, err := cli.AskInt("Choose template", len(result.Filenames))
-				if err != nil {
-					return err
-				}
-
-				filename = result.Filenames[input - 1]
+			input, err := cli.AskInt("Choose template", len(result.Filenames))
+			if err != nil {
+				return err
 			}
+
+			filename = result.Filenames[input - 1]
 
 			cli.Info("Selected %s", filename)
 
-			var err error
 			content, err = lib.ReadToString(filename)
 			if err != nil {
 				return err
+			}
+		}
+
+		targetFile := filepath.Join(dir, lib.GitIgnoreFileName)
+
+		if overwrite {
+			cli.Warning("%s will be overwritten with template `%s`", targetFile, filename)
+		} else {
+			cli.Info(
+				"Template `%s` will be appended into %s",
+				filename,
+				targetFile,
+			)
+		}
+
+		if !yes {
+			confirmed := cli.AskConfirm("Do you want to proceed?")
+			if !confirmed {
+				cli.Info("Aborted")
+				return nil
 			}
 		}
 
