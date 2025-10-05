@@ -24,7 +24,7 @@ var GitignoreCmd = &cobra.Command{
 	Short: "Create or append a `.gitignore` file in the project (aliases: g/git/i/ignore)",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
-			return fmt.Errorf("the name of the ignore type is required")
+			return fmt.Errorf("name of the ignore type required")
 		}
 
 		name := args[0]
@@ -35,7 +35,7 @@ var GitignoreCmd = &cobra.Command{
 		}
 
 		if len(result.Filenames) < 1 {
-			return fmt.Errorf("No gitignore template named like \"%s\" found.", name)
+			return fmt.Errorf("no gitignore template named like \"%s\" found.", name)
 		}
 
 		var content string

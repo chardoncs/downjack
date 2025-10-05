@@ -32,7 +32,7 @@ func AskInt(prompt string, numRange ...int) (int, error) {
 	} else if numLen == 2 {
 		low, high = numRange[0], numRange[1]
 	} else if numLen > 2 {
-		return invalid, fmt.Errorf("Too many arguments, expect 1~3, got %d", numLen + 1)
+		return invalid, fmt.Errorf("too many arguments, expect 1~3, got %d", numLen + 1)
 	}
 
 	hasRange := low <= high
@@ -58,12 +58,12 @@ func AskInt(prompt string, numRange ...int) (int, error) {
 		}
 
 		if hasRange && (num < low || num > high) {
-			return num, fmt.Errorf("The input number is out of range")
+			return num, fmt.Errorf("input number out of range")
 		}
 
 		return num, nil
 	}
 
 	// If scanner is unavailable
-	return invalid, fmt.Errorf("No content read")
+	return invalid, fmt.Errorf("no content read")
 }
