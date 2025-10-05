@@ -6,10 +6,11 @@ import (
 
 	"github.com/spf13/cobra"
 
-	lib "github.com/chardoncs/downjack/gitignore"
 	"github.com/chardoncs/downjack/internal/cli"
+	lib "github.com/chardoncs/downjack/internal/gitignore"
 	utils_filename "github.com/chardoncs/downjack/utils/filename"
 	utils_io "github.com/chardoncs/downjack/utils/io"
+	"github.com/chardoncs/downjack/utils/search"
 )
 
 var (
@@ -30,7 +31,7 @@ var GitignoreCmd = &cobra.Command{
 
 		name := args[0]
 
-		result, err := lib.SearchEmbed(name)
+		result, err := search.SearchEmbed(name, &lib.Root, lib.DirPrefix, "gitignore")
 		if err != nil {
 			return err
 		}
@@ -62,7 +63,10 @@ var GitignoreCmd = &cobra.Command{
 
 			cli.Info("Selected %s", filename)
 
-			content, err = lib.ReadToString(filename)
+			content, err = utils_io.ReadEmbedToString(
+				&lib.Root,
+				filepath.Join(lib.DirPrefix, filename),
+			)
 			if err != nil {
 				return err
 			}
@@ -97,10 +101,14 @@ var GitignoreCmd = &cobra.Command{
 
 		cli.InfoProgress("Writing into .gitignore")
 
-		if err := lib.SaveTo(dir, content, utils_io.SaveToOptions{
-			Overwrite: overwrite,
-			Title: resultTitle,
-		}); err != nil {
+		if err := utils_io.SaveTo(
+			filepath.Join(dir, ".gitignore"),
+			content,
+			utils_io.SaveToOptions{
+				Overwrite: overwrite,
+				Title: resultTitle,
+			},
+		); err != nil {
 			fmt.Println()
 			return err
 		}

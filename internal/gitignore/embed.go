@@ -3,6 +3,6 @@ package gitignore
 import "embed"
 
 //go:embed files/*.gitignore
-var root embed.FS
+var Root embed.FS
 
-const dirPrefix = "files"
+const DirPrefix = "files"
