@@ -18,7 +18,7 @@ var (
 )
 
 var GitignoreCmd = &cobra.Command{
-	Use: "gitignore [flags [values]] <name>",
+	Use: "gitignore <name>",
 	Aliases: []string{ "g", "git", "i", "ignore" },
 	Short: "Create or append a `.gitignore` file in the project (aliases: g/git/i/ignore)",
 	RunE: func(cmd *cobra.Command, args []string) error {
