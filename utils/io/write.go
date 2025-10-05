@@ -1,29 +1,24 @@
-package gitignore
+package io
 
 import (
 	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 )
 
-const GitIgnoreFileName = ".gitignore"
-
 type SaveToOptions struct {
 	Overwrite		bool
-	Title		string
+	Title			string
 }
 
-func SaveTo(dir string, content string, opts SaveToOptions) error {
+func SaveTo(targetPath string, content string, opts SaveToOptions) error {
 	content = strings.TrimSpace(content)
 	if content == "" {
 		return nil
 	}
 
-	path := filepath.Join(dir, GitIgnoreFileName)
-
-	file, err := os.OpenFile(path, buildFileFlag(opts.Overwrite), 0644)
+	file, err := os.OpenFile(targetPath, buildFileFlag(opts.Overwrite), 0644)
 	if err != nil {
 		return err
 	}

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/chardoncs/downjack/cmd/gitignore"
+	"github.com/chardoncs/downjack/cmd/license"
 	"github.com/chardoncs/downjack/internal/cli"
 	"github.com/spf13/cobra"
 )
@@ -25,4 +26,5 @@ func Execute() {
 
 func init() {
 	rootCmd.AddCommand(gitignore.GitignoreCmd)
+	rootCmd.AddCommand(license.LicenseCmd)
 }

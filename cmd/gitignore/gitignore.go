@@ -8,6 +8,8 @@ import (
 
 	lib "github.com/chardoncs/downjack/gitignore"
 	"github.com/chardoncs/downjack/internal/cli"
+	utils_filename "github.com/chardoncs/downjack/utils/filename"
+	utils_io "github.com/chardoncs/downjack/utils/io"
 )
 
 var (
@@ -66,7 +68,7 @@ var GitignoreCmd = &cobra.Command{
 			}
 		}
 
-		targetFile := filepath.Join(dir, lib.GitIgnoreFileName)
+		targetFile := filepath.Join(dir, ".gitignore")
 
 		if overwrite {
 			cli.Warning("%s will be overwritten with template `%s`", targetFile, filename)
@@ -87,7 +89,7 @@ var GitignoreCmd = &cobra.Command{
 		var resultTitle string
 		if !noTitle {
 			if title == "" {
-				resultTitle = lib.GetFilePrefix(filename)
+				resultTitle = utils_filename.GetFilePrefix(filename)
 			} else {
 				resultTitle = title
 			}
@@ -95,7 +97,7 @@ var GitignoreCmd = &cobra.Command{
 
 		cli.InfoProgress("Writing into .gitignore")
 
-		if err := lib.SaveTo(dir, content, lib.SaveToOptions{
+		if err := lib.SaveTo(dir, content, utils_io.SaveToOptions{
 			Overwrite: overwrite,
 			Title: resultTitle,
 		}); err != nil {

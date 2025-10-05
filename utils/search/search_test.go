@@ -1,4 +1,4 @@
-package gitignore
+package search
 
 import "testing"
 
@@ -6,7 +6,7 @@ func TestFilenameConstructionPureName(t *testing.T) {
 	keyword := "go"
 
 	expected := "Go.gitignore"
-	actual, err := constructPlausibleFilename(keyword)
+	actual, err := constructPlausibleFilename(keyword, "gitignore")
 	if err != nil {
 		t.Error(err)
 	}
@@ -20,7 +20,7 @@ func TestFilenameConstructionFilename(t *testing.T) {
 	keyword := "go.allowlist.gitignore"
 
 	expected := "Go.Allowlist.gitignore"
-	actual, err := constructPlausibleFilename(keyword)
+	actual, err := constructPlausibleFilename(keyword, "gitignore")
 	if err != nil {
 		t.Error(err)
 	}

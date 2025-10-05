@@ -1,26 +1,34 @@
-package gitignore
+package search
 
 import (
+	"embed"
 	"errors"
 	"os"
+	"path/filepath"
 	"strings"
 
+	"github.com/chardoncs/downjack/utils/io"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
 
 type SearchResult struct {
 	Filenames			[]string
-	IsExact			bool
+	IsExact				bool
 	// The content if it is an exact match
-	ExactContent	string
+	ExactContent		string
 }
 
-func SearchEmbed(keyword string) (*SearchResult, error) {
-	result, err := exactMatchEmbedFile(keyword)
+func SearchEmbed(
+	keyword string,
+	root *embed.FS,
+	dirPrefix string,
+	suffix string,
+) (*SearchResult, error) {
+	result, err := exactMatchEmbedFile(keyword, root, dirPrefix, suffix)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
-			return searchEmbedDir(keyword)
+			return searchEmbedDir(keyword, root, dirPrefix)
 		}
 
 		return nil, err
@@ -29,13 +37,18 @@ func SearchEmbed(keyword string) (*SearchResult, error) {
 	return result, nil
 }
 
-func exactMatchEmbedFile(keyword string) (*SearchResult, error) {
-	filename, err := constructPlausibleFilename(keyword)
+func exactMatchEmbedFile(
+	keyword string,
+	root *embed.FS,
+	dirPrefix string,
+	suffix string,
+) (*SearchResult, error) {
+	filename, err := constructPlausibleFilename(keyword, suffix)
 	if err != nil {
 		return nil, err
 	}
 
-	content, err := ReadToString(filename)
+	content, err := io.ReadEmbedToString(root, filepath.Join(dirPrefix, filename))
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +60,7 @@ func exactMatchEmbedFile(keyword string) (*SearchResult, error) {
 	}, nil
 }
 
-func searchEmbedDir(keyword string) (*SearchResult, error) {
+func searchEmbedDir(keyword string, root *embed.FS, dirPrefix string) (*SearchResult, error) {
 	dir, err := root.ReadDir(dirPrefix)
 	if err != nil {
 		return nil, err
@@ -62,9 +75,9 @@ func searchEmbedDir(keyword string) (*SearchResult, error) {
 	return &SearchResult{ Filenames: matched }, nil
 }
 
-func constructPlausibleFilename(name string) (string, error) {
+func constructPlausibleFilename(name string, suffix string) (string, error) {
 	caser := cases.Title(language.Und)
-
+	suffix = strings.TrimSpace(suffix)
 	chunks := strings.Split(name, ".")
 
 	var sb strings.Builder
@@ -72,8 +85,8 @@ func constructPlausibleFilename(name string) (string, error) {
 	for i, s := range chunks {
 		isLast := i == len(chunks) - 1
 
-		if isLast && s == "gitignore" {
-			// Try writing "gitignore"
+		if isLast && suffix != "" && s == suffix {
+			// Try writing suffix
 			if _, err := sb.WriteString(s); err != nil {
 				return "", err
 			}
@@ -87,7 +100,7 @@ func constructPlausibleFilename(name string) (string, error) {
 			}
 		}
 
-		if !isLast {
+		if !isLast || suffix != "" && s != suffix {
 			// Try writing "."
 			if _, err := sb.WriteString("."); err != nil {
 				return "", err
@@ -95,9 +108,11 @@ func constructPlausibleFilename(name string) (string, error) {
 		}
 	}
 
-	// Write suffix (if it's not `.gitignore`)
-	if _, err := sb.WriteString(".gitignore"); err != nil {
-		return "", err
+	// Write suffix
+	if suffix != "" {
+		if _, err := sb.WriteString(suffix); err != nil {
+			return "", err
+		}
 	}
 
 EndProc:
