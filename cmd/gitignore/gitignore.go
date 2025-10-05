@@ -15,7 +15,6 @@ var (
 	dir					string
 	title				string
 	noTitle				bool
-	yes					bool
 )
 
 var GitignoreCmd = &cobra.Command{
@@ -71,20 +70,18 @@ var GitignoreCmd = &cobra.Command{
 
 		if overwrite {
 			cli.Warning("%s will be overwritten with template `%s`", targetFile, filename)
+
+			confirmed := cli.AskConfirm("Do you want to proceed?")
+			if !confirmed {
+				cli.Info("Aborted")
+				return nil
+			}
 		} else {
 			cli.Info(
 				"Template `%s` will be appended into %s",
 				filename,
 				targetFile,
 			)
-		}
-
-		if !yes {
-			confirmed := cli.AskConfirm("Do you want to proceed?")
-			if !confirmed {
-				cli.Info("Aborted")
-				return nil
-			}
 		}
 
 		var resultTitle string
@@ -141,12 +138,5 @@ func init() {
 		"no-title",
 		false,
 		"do not add title for the snippet",
-	)
-
-	f.BoolVarP(
-		&yes,
-		"yes", "y",
-		false,
-		"skip confirmations",
 	)
 }
