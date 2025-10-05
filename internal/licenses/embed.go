@@ -3,6 +3,6 @@ package licenses
 import "embed"
 
 //go:embed files/*.LICENSE
-var root embed.FS
+var Root embed.FS
 
-const dirPrefix = "files"
+const DirPrefix = "files"

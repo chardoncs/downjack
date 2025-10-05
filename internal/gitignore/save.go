@@ -1,10 +1,13 @@
-package io
+package gitignore
 
 import (
 	"bufio"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
+
+	"github.com/chardoncs/downjack/utils/fs"
 )
 
 type SaveToOptions struct {
@@ -12,7 +15,8 @@ type SaveToOptions struct {
 	Title			string
 }
 
-func SaveTo(targetPath string, content string, opts SaveToOptions) error {
+func SaveTo(dir string, content string, opts SaveToOptions) error {
+	targetPath := filepath.Join(dir, ".gitignore")
 	content = strings.TrimSpace(content)
 	if content == "" {
 		return nil
@@ -28,7 +32,7 @@ func SaveTo(targetPath string, content string, opts SaveToOptions) error {
 	writer := bufio.NewWriter(file)
 
 	if !opts.Overwrite {
-		empty, err := isFileEmpty(file)
+		empty, err := fs.IsFileEmpty(file)
 		if err != nil {
 			return err
 		}
@@ -70,13 +74,4 @@ func buildFileFlag(overwrite bool) int {
 	}
 
 	return flag
-}
-
-func isFileEmpty(fp *os.File) (bool, error) {
-	stat, err := fp.Stat()
-	if err != nil {
-		return true, err
-	}
-
-	return stat.Size() == 0, nil
 }
