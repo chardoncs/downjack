@@ -23,7 +23,7 @@ func SaveTo(dir string, content string, opts SaveToOptions) error {
 
 	path := filepath.Join(dir, GitIgnoreFileName)
 
-	file, err := os.OpenFile(path, buildFileFlag(opts.Overwrite), 0666)
+	file, err := os.OpenFile(path, buildFileFlag(opts.Overwrite), 0644)
 	if err != nil {
 		return err
 	}
