@@ -13,6 +13,7 @@ var rootCmd = &cobra.Command{
 	CompletionOptions: cobra.CompletionOptions{
 		DisableDefaultCmd: true,
 	},
+	// Use custom error display instead
 	SilenceUsage: true,
 	SilenceErrors: true,
 }
