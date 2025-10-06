@@ -8,8 +8,7 @@ import (
 
 	"github.com/chardoncs/downjack/internal/cli"
 	lib "github.com/chardoncs/downjack/internal/gitignore"
-	utils_filename "github.com/chardoncs/downjack/utils/filename"
-	utils_io "github.com/chardoncs/downjack/utils/io"
+	"github.com/chardoncs/downjack/utils"
 	"github.com/chardoncs/downjack/utils/search"
 )
 
@@ -63,7 +62,7 @@ var GitignoreCmd = &cobra.Command{
 
 			cli.Info("Selected %s", filename)
 
-			content, err = utils_io.ReadEmbedToString(
+			content, err = utils.ReadEmbedToString(
 				&lib.Root,
 				filepath.Join(lib.DirPrefix, filename),
 			)
@@ -93,7 +92,7 @@ var GitignoreCmd = &cobra.Command{
 		var resultTitle string
 		if !noTitle {
 			if title == "" {
-				resultTitle = utils_filename.GetFilePrefix(filename)
+				resultTitle = utils.GetFilePrefix(filename)
 			} else {
 				resultTitle = title
 			}
