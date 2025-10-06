@@ -3,13 +3,14 @@ package gitignore
 import (
 	"fmt"
 	"path/filepath"
+	"strings"
 
 	"github.com/spf13/cobra"
 
 	"github.com/chardoncs/downjack/internal/cli"
 	lib "github.com/chardoncs/downjack/internal/gitignore"
+	"github.com/chardoncs/downjack/internal/gitignore/search"
 	"github.com/chardoncs/downjack/utils"
-	"github.com/chardoncs/downjack/utils/search"
 )
 
 var (
@@ -19,10 +20,15 @@ var (
 	noTitle				bool
 )
 
+var aliases = []string{ "g", "git", "i", "ignore" }
+
 var GitignoreCmd = &cobra.Command{
 	Use: "gitignore <name>",
-	Aliases: []string{ "g", "git", "i", "ignore" },
-	Short: "Create or append a `.gitignore` file in the project (aliases: g/git/i/ignore)",
+	Aliases: aliases,
+	Short: fmt.Sprintf(
+		"Create or append a `.gitignore` file in the project (aliases: %s)",
+		strings.Join(aliases, "/"),
+	),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return fmt.Errorf("name of the ignore type required")
@@ -30,7 +36,7 @@ var GitignoreCmd = &cobra.Command{
 
 		name := args[0]
 
-		result, err := search.SearchEmbed(name, &lib.Root, lib.DirPrefix, "gitignore")
+		result, err := search.SearchEmbed(name, lib.DirPrefix)
 		if err != nil {
 			return err
 		}

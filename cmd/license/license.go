@@ -1,17 +1,28 @@
 package license
 
-import "github.com/spf13/cobra"
+import (
+	"fmt"
+	"strings"
+
+	lib "github.com/chardoncs/downjack/internal/licenses"
+	"github.com/chardoncs/downjack/utils/search"
+	"github.com/spf13/cobra"
+)
 
 var (
 	overwrite		bool
 )
 
+var aliases = []string{ "l" }
+
 var LicenseCmd = &cobra.Command{
 	Use: "license [flags] <name> [extra-names...]",
-	Aliases: []string{ "l" },
-	Short: "Add an open source license (alias: l)",
+	Aliases: aliases,
+	Short: fmt.Sprintf("Add an open source license (aliases: %s)", strings.Join(aliases, "/")),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		names := args
+		for _, name := range args {
+			search.SearchEmbed(name, &lib.Root, lib.DirPrefix, "txt")
+		}
 
 		return nil
 	},
@@ -24,6 +35,6 @@ func init() {
 		&overwrite,
 		"overwrite", "o",
 		false,
-		"overwrite the `LICENSE` file instead of creating a new license file",
+		"overwrite the `LICENSE` file instead of ignoring or creating a new license file",
 	)
 }

@@ -1,16 +1,19 @@
-package search
+package search 
 
 import (
-	"embed"
 	"errors"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/chardoncs/downjack/utils"
+	lib "github.com/chardoncs/downjack/internal/gitignore"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
+
+const gitignoreSuffix = ".gitignore"
 
 type SearchResult struct {
 	Filenames			[]string
@@ -21,14 +24,12 @@ type SearchResult struct {
 
 func SearchEmbed(
 	keyword string,
-	root *embed.FS,
 	dirPrefix string,
-	suffix string,
 ) (*SearchResult, error) {
-	result, err := exactMatchEmbedFile(keyword, root, dirPrefix, suffix)
+	result, err := exactMatchEmbedFile(keyword, dirPrefix)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
-			return searchEmbedDir(keyword, root, dirPrefix)
+			return searchEmbedDir(keyword, dirPrefix)
 		}
 
 		return nil, err
@@ -39,16 +40,14 @@ func SearchEmbed(
 
 func exactMatchEmbedFile(
 	keyword string,
-	root *embed.FS,
 	dirPrefix string,
-	suffix string,
 ) (*SearchResult, error) {
-	filename, err := constructPlausibleFilename(keyword, suffix)
+	filename, err := constructPlausibleFilename(keyword)
 	if err != nil {
 		return nil, err
 	}
 
-	content, err := utils.ReadEmbedToString(root, filepath.Join(dirPrefix, filename))
+	content, err := utils.ReadEmbedToString(&lib.Root, filepath.Join(dirPrefix, filename))
 	if err != nil {
 		return nil, err
 	}
@@ -60,71 +59,47 @@ func exactMatchEmbedFile(
 	}, nil
 }
 
-func searchEmbedDir(keyword string, root *embed.FS, dirPrefix string) (*SearchResult, error) {
-	dir, err := root.ReadDir(dirPrefix)
+func searchEmbedDir(keyword string, dirPrefix string) (*SearchResult, error) {
+	dir, err := lib.Root.ReadDir(dirPrefix)
 	if err != nil {
 		return nil, err
 	}
 
-	names := make([]string, len(dir))
-	for i, name := range dir {
-		names[i] = name.Name()
-	}
-
-	matched := searchWords(keyword, names)
+	matched := searchWords(keyword, dir)
 	return &SearchResult{ Filenames: matched }, nil
 }
 
-func constructPlausibleFilename(name string, suffix string) (string, error) {
+func constructPlausibleFilename(name string) (string, error) {
 	caser := cases.Title(language.Und)
-	suffix = strings.TrimSpace(suffix)
+	name, _ = strings.CutSuffix(name, gitignoreSuffix)
 	chunks := strings.Split(name, ".")
 
 	var sb strings.Builder
 
-	for i, s := range chunks {
-		isLast := i == len(chunks) - 1
-
-		if isLast && suffix != "" && s == suffix {
-			// Try writing suffix
-			if _, err := sb.WriteString(s); err != nil {
-				return "", err
-			}
-			goto EndProc
-		}
-
+	for _, s := range chunks {
 		if _, err := sb.WriteString(caser.String(s)); err != nil {
 			// Try writing capitalized
 			if _, err := sb.WriteString(caser.String(s)); err != nil {
 				return "", err
 			}
 		}
-
-		if !isLast || suffix != "" && s != suffix {
-			// Try writing "."
-			if _, err := sb.WriteString("."); err != nil {
-				return "", err
-			}
-		}
 	}
 
-	// Write suffix
-	if suffix != "" {
-		if _, err := sb.WriteString(suffix); err != nil {
-			return "", err
-		}
+	if _, err := sb.WriteString(gitignoreSuffix); err != nil {
+		return "", err
 	}
 
-EndProc:
 	return sb.String(), nil
 }
 
 // (a dumb way to) search from an array of words
-func searchWords(keyword string, arr []string) []string {
+func searchWords(keyword string, dir []fs.DirEntry) []string {
 	lowered := strings.ToLower(keyword)
-	result := make([]string, 0, len(arr))
+	result := make([]string, 0, len(dir))
 
-	for _, name := range arr {
+	for _, item := range dir {
+		name := item.Name()
+
 		if strings.Contains(strings.ToLower(name), lowered) {
 			result = append(result, name)
 		}
