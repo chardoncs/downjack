@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	lib "github.com/chardoncs/downjack/internal/licenses"
-	"github.com/chardoncs/downjack/utils/search"
 	"github.com/spf13/cobra"
 )
 
@@ -18,11 +17,8 @@ var aliases = []string{ "l" }
 var LicenseCmd = &cobra.Command{
 	Use: "license [flags] <name> [extra-names...]",
 	Aliases: aliases,
-	Short: fmt.Sprintf("Add an open source license (aliases: %s)", strings.Join(aliases, "/")),
+	Short: fmt.Sprintf("Add one or more open source licenses (aliases: %s)", strings.Join(aliases, "/")),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		for _, name := range args {
-			search.SearchEmbed(name, &lib.Root, lib.DirPrefix, "txt")
-		}
 
 		return nil
 	},

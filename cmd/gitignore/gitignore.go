@@ -18,6 +18,7 @@ var (
 	dir					string
 	title				string
 	noTitle				bool
+	listing				bool
 )
 
 var aliases = []string{ "g", "git", "i", "ignore" }
@@ -36,7 +37,7 @@ var GitignoreCmd = &cobra.Command{
 
 		name := args[0]
 
-		result, err := search.SearchEmbed(name, lib.DirPrefix)
+		result, err := search.SearchEmbed(name)
 		if err != nil {
 			return err
 		}
@@ -149,5 +150,12 @@ func init() {
 		"no-title",
 		false,
 		"do not add title for the snippet",
+	)
+
+	f.BoolVarP(
+		&listing,
+		"list", "l",
+		false,
+		"list or search all available gitignore templates",
 	)
 }

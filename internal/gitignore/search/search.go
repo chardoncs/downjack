@@ -24,12 +24,11 @@ type SearchResult struct {
 
 func SearchEmbed(
 	keyword string,
-	dirPrefix string,
 ) (*SearchResult, error) {
-	result, err := exactMatchEmbedFile(keyword, dirPrefix)
+	result, err := exactMatchEmbedFile(keyword)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
-			return searchEmbedDir(keyword, dirPrefix)
+			return searchEmbedDir(keyword)
 		}
 
 		return nil, err
@@ -40,14 +39,13 @@ func SearchEmbed(
 
 func exactMatchEmbedFile(
 	keyword string,
-	dirPrefix string,
 ) (*SearchResult, error) {
 	filename, err := constructPlausibleFilename(keyword)
 	if err != nil {
 		return nil, err
 	}
 
-	content, err := utils.ReadEmbedToString(&lib.Root, filepath.Join(dirPrefix, filename))
+	content, err := utils.ReadEmbedToString(&lib.Root, filepath.Join(lib.DirPrefix, filename))
 	if err != nil {
 		return nil, err
 	}
@@ -59,8 +57,8 @@ func exactMatchEmbedFile(
 	}, nil
 }
 
-func searchEmbedDir(keyword string, dirPrefix string) (*SearchResult, error) {
-	dir, err := lib.Root.ReadDir(dirPrefix)
+func searchEmbedDir(keyword string) (*SearchResult, error) {
+	dir, err := lib.Root.ReadDir(lib.DirPrefix)
 	if err != nil {
 		return nil, err
 	}
