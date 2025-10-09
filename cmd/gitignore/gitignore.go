@@ -32,7 +32,7 @@ var GitignoreCmd = &cobra.Command{
 	),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
-			return fmt.Errorf("name of the ignore type required")
+			return utils.ArgsError(1, 0)
 		}
 
 		name := args[0]
