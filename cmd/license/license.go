@@ -24,6 +24,21 @@ var LicenseCmd = &cobra.Command{
 			return utils.ArgsError(1, 0)
 		}
 
+		name := args[0]
+
+		result, err := lib.SearchEmbed(name)
+		if err != nil {
+			return err
+		}
+
+		if len(result.Items) < 1 {
+			return utils.NotFoundError("license", name)
+		}
+
+		if result.Exact {
+			// TODO
+		}
+
 		return nil
 	},
 }

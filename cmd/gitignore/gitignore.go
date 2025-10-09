@@ -43,7 +43,7 @@ var GitignoreCmd = &cobra.Command{
 		}
 
 		if len(result.Filenames) < 1 {
-			return fmt.Errorf("no gitignore template named like \"%s\" found.", name)
+			return utils.NotFoundError("gitignore", name)
 		}
 
 		var content string
