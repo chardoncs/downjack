@@ -68,26 +68,48 @@ var LicenseCmd = &cobra.Command{
 			return nil
 		}
 
-		var target string = filepath.Join(dir, "LICENSE")
-		if !force {
-			stat, err := os.Stat(target)
-			if err != nil {
-				if errors.Is(err, os.ErrNotExist) {
-					goto WriteIntoTarget
-				}
+		target := filepath.Join(dir, "LICENSE")
 
-				return err
-			}
-
-			if stat.IsDir() {
-				goto WriteIntoTarget
-			}
-
-			cli.Warn("`LICENSE` already exists")
-			// TODO
+		exists, err := licenseFileExists(target)
+		if err != nil {
+			return err
 		}
 
-WriteIntoTarget:
+		if exists {
+			cli.Warn("LICENSE already exists")
+
+			if force {
+				cli.Warn("LICENSE will be overwritten")
+			} else {
+				candidateFilename := fmt.Sprintf("LICENSE-%s", selected.Id)
+				input := strings.ToLower(strings.TrimSpace(cli.Ask(`What do you want to do?
+- [a]dd a new file named %s
+- [o]verwrite the existing LICENSE
+- [N]o action
+: `,
+				candidateFilename)))
+
+				if input == "" {
+					input = " "
+				}
+
+				switch input[0] {
+				case 'a':
+					target = filepath.Join(dir, candidateFilename)
+				case 'o':
+					cli.Warn("LICENSE will be overwritten")
+				default:
+					cli.Info("Aborted")
+					return nil
+				}
+			}
+		}
+
+		cli.Info("The license will be written into `%s`", target)
+
+		if err := lib.WriteLicense(*selected, target); err != nil {
+			return err
+		}
 
 		return nil
 	},
@@ -109,4 +131,21 @@ func init() {
 		".",
 		"specify the directory where the ignore file resides",
 	)
+}
+
+func licenseFileExists(target string) (bool, error) {
+	stat, err := os.Stat(target)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return false, nil
+		}
+
+		return false, err
+	}
+
+	if stat.IsDir() {
+		return false, nil
+	}
+
+	return true, nil
 }
