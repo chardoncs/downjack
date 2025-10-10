@@ -13,7 +13,7 @@ func Info(format string, a ...any) {
 	)
 }
 
-func Warning(format string, a ...any) {
+func Warn(format string, a ...any) {
 	fmt.Println(
 		color.YellowString(">>"),
 		color.New(color.Bold).Sprint("Warning:"),
