@@ -9,6 +9,17 @@ import (
 	"strings"
 )
 
+func Ask(prompt string, a ...any) (answer string) {
+	fmt.Printf(prompt, a...)
+
+	scanner := bufio.NewScanner(os.Stdin)
+	if scanner.Scan() {
+		answer = strings.TrimSpace(scanner.Text())
+	}
+
+	return
+}
+
 func AskConfirm(prompt string) (confirmed bool) {
 	fmt.Printf("%s [Y/n]: ", prompt)
 

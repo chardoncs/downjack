@@ -81,7 +81,7 @@ var GitignoreCmd = &cobra.Command{
 		targetFile := filepath.Join(dir, ".gitignore")
 
 		if overwrite {
-			cli.Warning("%s will be overwritten with template `%s`", targetFile, filename)
+			cli.Warn("%s will be overwritten with template `%s`", targetFile, filename)
 
 			confirmed := cli.AskConfirm("Do you want to proceed?")
 			if !confirmed {
