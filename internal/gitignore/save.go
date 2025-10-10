@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/chardoncs/downjack/utils/fs"
+	"github.com/chardoncs/downjack/utils"
 )
 
 type SaveToOptions struct {
@@ -32,7 +32,7 @@ func SaveTo(dir string, content string, opts SaveToOptions) error {
 	writer := bufio.NewWriter(file)
 
 	if !opts.Overwrite {
-		empty, err := fs.IsFileEmpty(file)
+		empty, err := utils.IsFileEmpty(file)
 		if err != nil {
 			return err
 		}
