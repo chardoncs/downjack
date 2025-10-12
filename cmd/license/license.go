@@ -9,6 +9,7 @@ import (
 
 	"github.com/chardoncs/downjack/internal/cli"
 	lib "github.com/chardoncs/downjack/internal/licenses"
+	"github.com/chardoncs/downjack/internal/licenses/regex/ext"
 	"github.com/chardoncs/downjack/utils"
 	"github.com/spf13/cobra"
 )
@@ -68,7 +69,15 @@ var LicenseCmd = &cobra.Command{
 			return nil
 		}
 
-		target := filepath.Join(dir, "LICENSE")
+		targetFile := "LICENSE"
+		extName := getFormatExtName(selected.Filename)
+
+		isPlainText := extName == "txt"
+		if !isPlainText {
+			targetFile = fmt.Sprintf("%s.%s", targetFile, extName)
+		}
+
+		target := filepath.Join(dir, targetFile)
 
 		exists, err := licenseFileExists(target)
 		if err != nil {
@@ -76,18 +85,24 @@ var LicenseCmd = &cobra.Command{
 		}
 
 		if exists {
-			cli.Warn("LICENSE already exists")
+			cli.Warn("%s already exists", targetFile)
 
 			if force {
-				cli.Warn("LICENSE will be overwritten")
+				cli.Warn("%s will be overwritten", targetFile)
 			} else {
-				candidateFilename := fmt.Sprintf("LICENSE-%s", selected.Id)
+				var candidateFilename string
+				if isPlainText {
+					candidateFilename = fmt.Sprintf("LICENSE-%s", selected.Id)
+				} else {
+					candidateFilename = fmt.Sprintf("LICENSE-%s.%s", selected.Id, extName)
+				}
+
 				input := strings.ToLower(strings.TrimSpace(cli.Ask(`What do you want to do?
 - [a]dd a new file named %s
-- [o]verwrite the existing LICENSE
+- [o]verwrite the existing %s
 - [N]o action
 : `,
-				candidateFilename)))
+				candidateFilename, targetFile)))
 
 				if input == "" {
 					input = " "
@@ -97,7 +112,7 @@ var LicenseCmd = &cobra.Command{
 				case 'a':
 					target = filepath.Join(dir, candidateFilename)
 				case 'o':
-					cli.Warn("LICENSE will be overwritten")
+					cli.Warn("%s will be overwritten", targetFile)
 				default:
 					cli.Info("Aborted")
 					return nil
@@ -150,4 +165,13 @@ func licenseFileExists(target string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func getFormatExtName(filename string) string {
+	cutFilename, _ := strings.CutSuffix(filename, ".tmpl")
+	result, _ := strings.CutPrefix(
+		ext.GetRecognizedExtPattern().FindString(cutFilename),
+		".",
+	)
+	return result
 }
