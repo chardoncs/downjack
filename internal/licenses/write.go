@@ -28,7 +28,7 @@ func WriteLicense(item MatchedItem, target string) error {
 			return err
 		}
 
-		data, err := newLicenseInfo()
+		data, err := getLicenseInfo()
 		if err != nil {
 			return err
 		}

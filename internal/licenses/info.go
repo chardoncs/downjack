@@ -11,7 +11,7 @@ type LicenseInfo struct {
 	Name		string
 }
 
-func newLicenseInfo() (*LicenseInfo, error) {
+func getLicenseInfo() (*LicenseInfo, error) {
 	name, err := utils.GetUserName()
 	if err != nil {
 		return nil, err
