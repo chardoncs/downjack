@@ -105,11 +105,13 @@ var LicenseCmd = &cobra.Command{
 			}
 		}
 
-		cli.Info("The license will be written into `%s`", target)
+		cli.InfoProgress("Writing license into `%s`", target)
 
 		if err := lib.WriteLicense(*selected, target); err != nil {
 			return err
 		}
+
+		cli.Done()
 
 		return nil
 	},
