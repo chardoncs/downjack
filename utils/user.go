@@ -1,6 +1,9 @@
 package utils
 
-import "os/exec"
+import (
+	"os/exec"
+	"strings"
+)
 
 func GetUserName() (string, error) {
 	// Get from Git
@@ -11,5 +14,5 @@ func GetUserName() (string, error) {
 		return "", err
 	}
 
-	return string(b), nil
+	return strings.TrimSpace(string(b)), nil
 }
