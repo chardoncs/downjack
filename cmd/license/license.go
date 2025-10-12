@@ -48,13 +48,13 @@ var LicenseCmd = &cobra.Command{
 		} else {
 			cli.Info("Found license(s):")
 
-			ids := make([]string, len(result.Items))
+			names := make([]string, len(result.Items))
 			for i, item := range result.Items {
-				ids[i] = item.Id
+				names[i] = item.Filename
 			}
-			cli.PrintItems(ids)
+			cli.PrintItems(names)
 
-			num, err := cli.AskInt("Choose license", len(ids))
+			num, err := cli.AskInt("Choose license", len(names))
 			if err != nil {
 				return err
 			}
