@@ -63,7 +63,12 @@ func AskInt(prompt string, numRange ...int) (int, error) {
 
 	scanner := bufio.NewScanner(os.Stdin)
 	if scanner.Scan() {
-		num, err := strconv.Atoi(scanner.Text())
+		input := strings.TrimSpace(scanner.Text())
+		if input == "" {
+			return invalid, fmt.Errorf("no input")
+		}
+
+		num, err := strconv.Atoi(input)
 		if err != nil {
 			return invalid, err
 		}
