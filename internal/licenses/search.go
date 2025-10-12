@@ -37,7 +37,7 @@ func SearchEmbed(keyword string) (*SearchResult, error) {
 				Filename: filename,
 			}
 
-			if getLicenseId(loweredName) == lowerKeyword {
+			if strings.ToLower(item.Id) == lowerKeyword {
 				result.Items = []MatchedItem{ item }
 				result.Exact = true
 				break
