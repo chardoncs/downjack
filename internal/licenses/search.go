@@ -1,6 +1,10 @@
 package licenses
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/chardoncs/downjack/internal/licenses/regex/ext"
+)
 
 type MatchedItem struct {
 	Id			string
@@ -46,7 +50,10 @@ func SearchEmbed(keyword string) (*SearchResult, error) {
 	return result, nil
 }
 
-func getLicenseId(filename string) string {
-	before, _, _ := strings.Cut(filename, ".")
-	return before
+func getLicenseId(filename string) (result string) {
+	result, _ = strings.CutSuffix(filename, ".tmpl")
+	result = ext.GetRecognizedExtPattern().
+		ReplaceAllString(result, "")
+
+	return
 }
