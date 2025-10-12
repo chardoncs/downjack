@@ -2,12 +2,13 @@ package licenses
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 	"text/template"
 )
 
 func WriteLicense(item MatchedItem, target string) error {
-	b, err := Root.ReadFile(item.Filename)
+	b, err := Root.ReadFile(filepath.Join(DirPrefix, item.Filename))
 	if err != nil {
 		return err
 	}
