@@ -33,7 +33,7 @@ func SearchEmbed(keyword string) (*SearchResult, error) {
 				Filename: filename,
 			}
 
-			if loweredName == lowerKeyword {
+			if getLicenseId(loweredName) == lowerKeyword {
 				result.Items = []MatchedItem{ item }
 				result.Exact = true
 				break
