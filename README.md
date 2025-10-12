@@ -4,7 +4,7 @@ A simple ~down jacket~ developer helper tool.
 
 It can set up `.gitignore` and licenses in your projects.
 
-## Quick start
+## Quick Start
 
 For example, you want to set up `.gitignore` for a Go project:
 
