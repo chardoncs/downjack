@@ -9,7 +9,6 @@ import (
 
 	"github.com/chardoncs/downjack/internal/cli"
 	lib "github.com/chardoncs/downjack/internal/licenses"
-	"github.com/chardoncs/downjack/internal/licenses/regex/ext"
 	"github.com/chardoncs/downjack/utils"
 	"github.com/spf13/cobra"
 )
@@ -70,7 +69,7 @@ var LicenseCmd = &cobra.Command{
 		}
 
 		targetFile := "LICENSE"
-		extName := getFormatExtName(selected.Filename)
+		extName := utils.GetFormatExtName(selected.Filename)
 
 		isPlainText := extName == "txt"
 		if !isPlainText {
@@ -165,13 +164,4 @@ func licenseFileExists(target string) (bool, error) {
 	}
 
 	return true, nil
-}
-
-func getFormatExtName(filename string) string {
-	cutFilename, _ := strings.CutSuffix(filename, ".tmpl")
-	result, _ := strings.CutPrefix(
-		ext.GetRecognizedExtPattern().FindString(cutFilename),
-		".",
-	)
-	return result
 }

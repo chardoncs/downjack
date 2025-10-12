@@ -1,11 +1,19 @@
 package licenses
 
 import (
+	html_tmpl "html/template"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
-	"text/template"
+	text_tmpl "text/template"
+
+	"github.com/chardoncs/downjack/utils"
 )
+
+type templateExecutor interface {
+	Execute(io.Writer, any) error
+}
 
 func WriteLicense(item MatchedItem, target string) error {
 	b, err := Root.ReadFile(filepath.Join(DirPrefix, item.Filename))
@@ -24,7 +32,16 @@ func WriteLicense(item MatchedItem, target string) error {
 	defer targetFile.Close()
 
 	if isGoTemplate(item.Filename) {
-		tmpl, err := template.New(item.Id).Parse(string(b))
+		var tmpl templateExecutor
+		var err error
+
+		if utils.GetFormatExtName(item.Filename) == "html" {
+			// HTML template
+			tmpl, err = html_tmpl.New(item.Id).Parse(string(b))
+		} else {
+			// Text template
+			tmpl, err = text_tmpl.New(item.Id).Parse(string(b))
+		}
 		if err != nil {
 			return err
 		}
