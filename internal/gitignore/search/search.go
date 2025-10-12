@@ -81,9 +81,13 @@ func constructPlausibleFilename(name string) (string, error) {
 				return "", err
 			}
 		}
+
+		if _, err := sb.WriteString("."); err != nil {
+			return "", err
+		}
 	}
 
-	if _, err := sb.WriteString(gitignoreSuffix); err != nil {
+	if _, err := sb.WriteString("gitignore"); err != nil {
 		return "", err
 	}
 
