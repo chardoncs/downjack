@@ -9,7 +9,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use: "downjack [subcommand] [flags] [values]",
-	Short: "Set up your gitignore and license files like a lumberjack",
+	Short: "Set up your gitignore and license files like using a lumberjack",
 	Version: "0.1.0",
 	CompletionOptions: cobra.CompletionOptions{
 		DisableDefaultCmd: true,
