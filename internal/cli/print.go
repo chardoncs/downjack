@@ -6,14 +6,14 @@ import (
 	"github.com/fatih/color"
 )
 
-func Info(format string, a ...any) {
+func Infof(format string, a ...any) {
 	fmt.Println(
 		color.CyanString(">>"),
 		fmt.Sprintf(format, a...),
 	)
 }
 
-func Warn(format string, a ...any) {
+func Warnf(format string, a ...any) {
 	fmt.Println(
 		color.YellowString(">>"),
 		color.New(color.Bold).Sprint("Warning:"),
@@ -21,7 +21,7 @@ func Warn(format string, a ...any) {
 	)
 }
 
-func InfoProgress(format string, a ...any) {
+func InfoProgressf(format string, a ...any) {
 	fmt.Print(
 		color.CyanString(">>"),
 		" ",
@@ -36,6 +36,6 @@ func Done() {
 
 func PrintItems(items []string) {
 	for i, item := range items {
-		fmt.Printf("%3d) %s\n", i + 1, item)
+		fmt.Printf("%3d) %s\n", i+1, item)
 	}
 }

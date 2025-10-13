@@ -14,17 +14,17 @@ import (
 )
 
 var (
-	overwrite			bool
-	dir					string
-	title				string
-	noTitle				bool
-	listing				bool
+	overwrite bool
+	dir       string
+	title     string
+	noTitle   bool
+	listing   bool
 )
 
-var aliases = []string{ "g", "git", "i", "ignore" }
+var aliases = []string{"g", "git", "i", "ignore"}
 
 var GitignoreCmd = &cobra.Command{
-	Use: "gitignore <name>",
+	Use:     "gitignore <name>",
 	Aliases: aliases,
 	Short: fmt.Sprintf(
 		"Create or append a `.gitignore` file in the project (aliases: %s)",
@@ -51,11 +51,11 @@ var GitignoreCmd = &cobra.Command{
 
 		if result.IsExact {
 			filename = result.Filenames[0]
-			cli.Info("Found exact template: %s", filename)
+			cli.Infof("Found exact template: %s", filename)
 
 			content = result.ExactContent
 		} else {
-			cli.Info("Found template(s):")
+			cli.Infof("Found template(s):")
 			cli.PrintItems(result.Filenames)
 
 			fmt.Println()
@@ -65,9 +65,9 @@ var GitignoreCmd = &cobra.Command{
 				return err
 			}
 
-			filename = result.Filenames[input - 1]
+			filename = result.Filenames[input-1]
 
-			cli.Info("Selected %s", filename)
+			cli.Infof("Selected %s", filename)
 
 			content, err = utils.ReadEmbedToString(
 				&lib.Root,
@@ -81,15 +81,15 @@ var GitignoreCmd = &cobra.Command{
 		targetFile := filepath.Join(dir, ".gitignore")
 
 		if overwrite {
-			cli.Warn("%s will be overwritten with template `%s`", targetFile, filename)
+			cli.Warnf("%s will be overwritten with template `%s`", targetFile, filename)
 
 			confirmed := cli.AskConfirm("Do you want to proceed?")
 			if !confirmed {
-				cli.Info("Aborted")
+				cli.Infof("Aborted")
 				return nil
 			}
 		} else {
-			cli.Info(
+			cli.Infof(
 				"Template `%s` will be appended into %s",
 				filename,
 				targetFile,
@@ -105,11 +105,11 @@ var GitignoreCmd = &cobra.Command{
 			}
 		}
 
-		cli.InfoProgress("Writing into .gitignore")
+		cli.InfoProgressf("Writing into .gitignore")
 
 		if err := lib.SaveTo(dir, content, lib.SaveToOptions{
 			Overwrite: overwrite,
-			Title: resultTitle,
+			Title:     resultTitle,
 		}); err != nil {
 			fmt.Println()
 			return err

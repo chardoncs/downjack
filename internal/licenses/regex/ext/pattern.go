@@ -6,8 +6,8 @@ import (
 )
 
 var (
-	pattern		*regexp.Regexp
-	once		sync.Once
+	pattern *regexp.Regexp
+	once    sync.Once
 )
 
 func GetRecognizedExtPattern() *regexp.Regexp {

@@ -23,8 +23,8 @@ func WriteLicense(item MatchedItem, target string) error {
 
 	targetFile, err := os.OpenFile(
 		target,
-		os.O_WRONLY | os.O_CREATE | os.O_TRUNC,
-		0664,
+		os.O_WRONLY|os.O_CREATE|os.O_TRUNC,
+		0o664,
 	)
 	if err != nil {
 		return err
@@ -32,26 +32,12 @@ func WriteLicense(item MatchedItem, target string) error {
 	defer targetFile.Close()
 
 	if isGoTemplate(item.Filename) {
-		var tmpl templateExecutor
-		var err error
-
-		if utils.GetFormatExtName(item.Filename) == "html" {
-			// HTML template
-			tmpl, err = html_tmpl.New(item.Id).Parse(string(b))
-		} else {
-			// Text template
-			tmpl, err = text_tmpl.New(item.Id).Parse(string(b))
-		}
+		tmpl, err := parseTemplate(item, string(b))
 		if err != nil {
 			return err
 		}
 
-		data, err := getLicenseInfo()
-		if err != nil {
-			return err
-		}
-
-		if err := tmpl.Execute(targetFile, data); err != nil {
+		if err := executeTemplate(tmpl, targetFile); err != nil {
 			return err
 		}
 	} else {
@@ -65,4 +51,27 @@ func WriteLicense(item MatchedItem, target string) error {
 
 func isGoTemplate(filename string) bool {
 	return strings.HasSuffix(filename, ".tmpl")
+}
+
+func parseTemplate(item MatchedItem, content string) (templateExecutor, error) {
+	if utils.GetFormatExtName(item.Filename) == "html" {
+		// HTML template
+		return html_tmpl.New(item.Id).Parse(content)
+	}
+
+	// Text template
+	return text_tmpl.New(item.Id).Parse(content)
+}
+
+func executeTemplate(tmpl templateExecutor, writer io.Writer) error {
+	data, err := getLicenseInfo()
+	if err != nil {
+		return err
+	}
+
+	if err := tmpl.Execute(writer, data); err != nil {
+		return err
+	}
+
+	return nil
 }

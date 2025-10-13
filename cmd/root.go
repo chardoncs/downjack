@@ -8,11 +8,11 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use: "downjack [command]",
-	Short: "Set up your gitignore and license files like using a lumberjack",
+	Use:     "downjack [command]",
+	Short:   "Set up your gitignore and license files like using a lumberjack",
 	Version: "0.1.0",
 	// Use custom error display instead
-	SilenceUsage: true,
+	SilenceUsage:  true,
 	SilenceErrors: true,
 }
 

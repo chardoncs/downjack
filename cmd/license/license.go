@@ -14,16 +14,16 @@ import (
 )
 
 var (
-	dir			string
-	force		bool
+	dir   string
+	force bool
 )
 
-var aliases = []string{ "l" }
+var aliases = []string{"l"}
 
 var LicenseCmd = &cobra.Command{
-	Use: "license [flags] <name>",
+	Use:     "license [flags] <name>",
 	Aliases: aliases,
-	Short: fmt.Sprintf("Add an open source license (aliases: %s)", strings.Join(aliases, "/")),
+	Short:   fmt.Sprintf("Add an open source license (aliases: %s)", strings.Join(aliases, "/")),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return utils.ArgsError(1, 0)
@@ -44,9 +44,9 @@ var LicenseCmd = &cobra.Command{
 
 		if result.Exact {
 			selected = &result.Items[0]
-			cli.Info("Found exact license: %s", selected.Id)
+			cli.Infof("Found exact license: %s", selected.Id)
 		} else {
-			cli.Info("Found license(s):")
+			cli.Infof("Found license(s):")
 
 			names := make([]string, len(result.Items))
 			for i, item := range result.Items {
@@ -59,12 +59,12 @@ var LicenseCmd = &cobra.Command{
 				return err
 			}
 
-			selected = &result.Items[num - 1]
+			selected = &result.Items[num-1]
 		}
 
 		// Future-proof check
 		if selected == nil {
-			cli.Info("Nothing is selected")
+			cli.Infof("Nothing is selected")
 			return nil
 		}
 
@@ -84,10 +84,10 @@ var LicenseCmd = &cobra.Command{
 		}
 
 		if exists {
-			cli.Warn("%s already exists", targetFile)
+			cli.Warnf("%s already exists", targetFile)
 
 			if force {
-				cli.Warn("%s will be overwritten", targetFile)
+				cli.Warnf("%s will be overwritten", targetFile)
 			} else {
 				var candidateFilename string
 				if isPlainText {
@@ -96,12 +96,12 @@ var LicenseCmd = &cobra.Command{
 					candidateFilename = fmt.Sprintf("LICENSE-%s.%s", selected.Id, extName)
 				}
 
-				input := strings.ToLower(strings.TrimSpace(cli.Ask(`What do you want to do?
+				input := strings.ToLower(strings.TrimSpace(cli.Askf(`What do you want to do?
 - [a]dd a new file named %s
 - [o]verwrite the existing %s
 - [N]o action
 : `,
-				candidateFilename, targetFile)))
+					candidateFilename, targetFile)))
 
 				if input == "" {
 					input = " "
@@ -111,15 +111,15 @@ var LicenseCmd = &cobra.Command{
 				case 'a':
 					target = filepath.Join(dir, candidateFilename)
 				case 'o':
-					cli.Warn("%s will be overwritten", targetFile)
+					cli.Warnf("%s will be overwritten", targetFile)
 				default:
-					cli.Info("Aborted")
+					cli.Infof("Aborted")
 					return nil
 				}
 			}
 		}
 
-		cli.InfoProgress("Writing license into `%s`", target)
+		cli.InfoProgressf("Writing license into `%s`", target)
 
 		if err := lib.WriteLicense(*selected, target); err != nil {
 			return err

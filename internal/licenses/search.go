@@ -7,13 +7,13 @@ import (
 )
 
 type MatchedItem struct {
-	Id			string
-	Filename	string
+	Id       string
+	Filename string
 }
 
 type SearchResult struct {
-	Items		[]MatchedItem
-	Exact		bool
+	Items []MatchedItem
+	Exact bool
 }
 
 func SearchEmbed(keyword string) (*SearchResult, error) {
@@ -33,12 +33,12 @@ func SearchEmbed(keyword string) (*SearchResult, error) {
 
 		if strings.Contains(loweredName, lowerKeyword) {
 			item := MatchedItem{
-				Id: getLicenseId(filename),
+				Id:       getLicenseId(filename),
 				Filename: filename,
 			}
 
 			if strings.ToLower(item.Id) == lowerKeyword {
-				result.Items = []MatchedItem{ item }
+				result.Items = []MatchedItem{item}
 				result.Exact = true
 				break
 			}
@@ -55,5 +55,5 @@ func getLicenseId(filename string) (result string) {
 	result = ext.GetRecognizedExtPattern().
 		ReplaceAllString(result, "")
 
-	return
+	return result
 }

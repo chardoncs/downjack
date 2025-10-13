@@ -12,5 +12,5 @@ func ArgsError(expect, actual int) error {
 }
 
 func NotFoundError(fileGroup string, keyword string) error {
-	return fmt.Errorf("no %s template named like \"%s\" found.", fileGroup, keyword)
+	return fmt.Errorf("no %s template named like \"%s\" found", fileGroup, keyword)
 }

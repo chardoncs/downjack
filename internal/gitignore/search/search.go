@@ -1,4 +1,4 @@
-package search 
+package search
 
 import (
 	"errors"
@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/chardoncs/downjack/utils"
 	lib "github.com/chardoncs/downjack/internal/gitignore"
+	"github.com/chardoncs/downjack/utils"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
@@ -16,10 +16,10 @@ import (
 const gitignoreSuffix = ".gitignore"
 
 type SearchResult struct {
-	Filenames			[]string
-	IsExact				bool
-	// The content if it is an exact match
-	ExactContent		string
+	Filenames []string
+	IsExact   bool
+	// The content if it is an exact match.
+	ExactContent string
 }
 
 func SearchEmbed(
@@ -51,8 +51,8 @@ func exactMatchEmbedFile(
 	}
 
 	return &SearchResult{
-		Filenames: []string{ filename },
-		IsExact: true,
+		Filenames:    []string{filename},
+		IsExact:      true,
 		ExactContent: content,
 	}, nil
 }
@@ -64,7 +64,7 @@ func searchEmbedDir(keyword string) (*SearchResult, error) {
 	}
 
 	matched := searchWords(keyword, dir)
-	return &SearchResult{ Filenames: matched }, nil
+	return &SearchResult{Filenames: matched}, nil
 }
 
 func constructPlausibleFilename(name string) (string, error) {
@@ -94,7 +94,7 @@ func constructPlausibleFilename(name string) (string, error) {
 	return sb.String(), nil
 }
 
-// (a dumb way to) search from an array of words
+// (a dumb way to) search from an array of words.
 func searchWords(keyword string, dir []fs.DirEntry) []string {
 	lowered := strings.ToLower(keyword)
 	result := make([]string, 0, len(dir))

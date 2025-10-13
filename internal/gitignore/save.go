@@ -11,8 +11,8 @@ import (
 )
 
 type SaveToOptions struct {
-	Overwrite		bool
-	Title			string
+	Overwrite bool
+	Title     string
 }
 
 func SaveTo(dir string, content string, opts SaveToOptions) error {
@@ -22,7 +22,7 @@ func SaveTo(dir string, content string, opts SaveToOptions) error {
 		return nil
 	}
 
-	file, err := os.OpenFile(targetPath, buildFileFlag(opts.Overwrite), 0664)
+	file, err := os.OpenFile(targetPath, buildFileFlag(opts.Overwrite), 0o664)
 	if err != nil {
 		return err
 	}

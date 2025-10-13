@@ -7,8 +7,8 @@ import (
 )
 
 type LicenseInfo struct {
-	Year		int
-	Name		string
+	Year int
+	Name string
 }
 
 func getLicenseInfo() (*LicenseInfo, error) {
@@ -25,4 +25,3 @@ func getLicenseInfo() (*LicenseInfo, error) {
 		Name: name,
 	}, nil
 }
-

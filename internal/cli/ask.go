@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func Ask(prompt string, a ...any) (answer string) {
+func Askf(prompt string, a ...any) (answer string) {
 	fmt.Printf(prompt, a...)
 
 	scanner := bufio.NewScanner(os.Stdin)
@@ -17,7 +17,7 @@ func Ask(prompt string, a ...any) (answer string) {
 		answer = strings.TrimSpace(scanner.Text())
 	}
 
-	return
+	return answer
 }
 
 func AskConfirm(prompt string) (confirmed bool) {
@@ -29,11 +29,11 @@ func AskConfirm(prompt string) (confirmed bool) {
 		confirmed = result == "" || strings.HasPrefix(strings.ToLower(result), "y")
 	}
 
-	return
+	return confirmed
 }
 
 func AskInt(prompt string, numRange ...int) (int, error) {
-	var low, high int = 1, 0
+	low, high := 1, 0
 	numLen := len(numRange)
 
 	invalid := math.MinInt
@@ -43,12 +43,12 @@ func AskInt(prompt string, numRange ...int) (int, error) {
 	} else if numLen == 2 {
 		low, high = numRange[0], numRange[1]
 	} else if numLen > 2 {
-		return invalid, fmt.Errorf("too many arguments, expect 1~3, got %d", numLen + 1)
+		return invalid, fmt.Errorf("too many arguments, expect 1~3, got %d", numLen+1)
 	}
 
 	hasRange := low <= high
 	if hasRange {
-		invalid = min(0, low - 1)
+		invalid = min(0, low-1)
 	}
 
 	fmt.Printf("%s", prompt)
