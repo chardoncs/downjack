@@ -1,7 +1,10 @@
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 # vim: set ts=2 sw=2 tw=0 fo=cnqoj
 
+# Not working well, still figuring out how to tweak Goreleaser Free :/
+
 version: 2
+pro: false
 
 project_name: downjack
 
@@ -47,3 +50,41 @@ release:
     ---
 
     Released by [GoReleaser](https://github.com/goreleaser/goreleaser).
+
+#aur_sources:
+#  - maintainers:
+#      - "Charles Dong <chardon_cs@proton.me>"
+#    description: "Set up your gitignore and license files like using a lumberjack"
+#    homepage: "https://github.com/chardoncs/downjack"
+#    license: "MIT"
+#
+#    private_key: "{{ .Env.AUR_KEY }}"
+#    git_url: "ssh://aur@aur.archlinux.org/downjack-bin.git"
+#
+#    provides:
+#      - downjack
+#
+#    conflicts:
+#      - downjack
+#
+#    depends:
+#      - git
+#
+#aurs:
+#  - maintainers:
+#      - "Charles Dong <chardon_cs@proton.me>"
+#    description: "Set up your gitignore and license files like using a lumberjack"
+#    homepage: "https://github.com/chardoncs/downjack"
+#    license: "MIT"
+#
+#    private_key: "{{ .Env.AUR_KEY }}"
+#    git_url: "ssh://aur@aur.archlinux.org/downjack-bin.git"
+#
+#    provides:
+#      - downjack
+#
+#    conflicts:
+#      - downjack
+#
+#    depends:
+#      - git
