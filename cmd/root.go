@@ -10,7 +10,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:     "downjack [command]",
 	Short:   "Set up your gitignore and license files like using a lumberjack",
-	Version: "0.1.0",
+	Version: "0.1.0", // TODO: make version configurable
 	// Use custom error display instead
 	SilenceUsage:  true,
 	SilenceErrors: true,
