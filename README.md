@@ -47,7 +47,7 @@ and that's it, your project is now ready to work with!
 Use `downjack [command] --help` for more information about a command.
 
 ## Install - manual way
-Go to [releases](https://github.com/Fynjirby/gmfi/releases/) and download latest binary for your OS, then move it to `/usr/local/bin/` and enjoy with simple `gmfi` in terminal!
+Go to [releases](https://github.com/chardoncs/downjack/releases/) and download latest binary for your OS, then move it to `/usr/local/bin/` and enjoy with simple `downjack` in terminal!
 
 ## Building
 - Install [Go](https://go.dev/) and make sure it's working with `go version`
