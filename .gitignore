@@ -31,3 +31,6 @@ go.work.sum
 # .vscode/
 # Added by goreleaser init:
 dist/
+
+# Built binary
+downjack
