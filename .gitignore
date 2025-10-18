@@ -34,3 +34,5 @@ dist/
 
 # Built binary
 downjack
+
+completions/
