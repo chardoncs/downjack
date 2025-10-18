@@ -129,8 +129,8 @@ aur_sources:
     git_url: "ssh://aur@aur.archlinux.org/downjack.git"
 
     commit_author:
-      name: "Charles Dong"
-      email: "chardon_cs@proton.me"
+      name: "goreleaserbot"
+      email: "44740171+chardoncs@users.noreply.github.com"
 
     makedepends:
       - go
@@ -179,8 +179,8 @@ aurs:
     git_url: "ssh://aur@aur.archlinux.org/downjack-bin.git"
 
     commit_author:
-      name: "Charles Dong"
-      email: "chardon_cs@proton.me"
+      name: "goreleaserbot"
+      email: "44740171+chardoncs@users.noreply.github.com"
 
     provides:
       - downjack
