@@ -145,7 +145,7 @@ func init() {
 		&dir,
 		"dir", "d",
 		".",
-		"specify the directory where the ignore file resides",
+		"specify the directory where the license file resides",
 	)
 }
 
