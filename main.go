@@ -1,7 +1,15 @@
 package main
 
-import "github.com/chardoncs/downjack/cmd"
+import (
+	"context"
+	"os"
+
+	"github.com/chardoncs/downjack/cmd"
+	"github.com/charmbracelet/fang"
+)
 
 func main() {
-	cmd.Execute()
+	if err := fang.Execute(context.Background(), cmd.RootCmd); err != nil {
+		os.Exit(1)
+	}
 }
