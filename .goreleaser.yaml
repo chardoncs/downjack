@@ -65,7 +65,6 @@ archives:
     files:
       - README*
       - LICENSE*
-      - manpages/*
       - completions/*
 
 checksum:
@@ -143,7 +142,6 @@ aur_sources:
       go mod download
     build: |-
       mkdir completions
-      mkdir manpages
       export CGO_CPPFLAGS="${CPPFLAGS}"
       export CGO_CFLAGS="${CFLAGS}"
       export CGO_CXXFLAGS="${CXXFLAGS}"
@@ -153,7 +151,6 @@ aur_sources:
       ./downjack completion bash >./completions/downjack.bash
       ./downjack completion zsh >./completions/downjack.zsh
       ./downjack completion fish >./completions/downjack.fish
-      ./downjack man | gzip -c >./manpages/downjack.1.gz
     package: |-
       # bin
       install -Dm755 "./downjack" "${pkgdir}/usr/bin/downjack"
