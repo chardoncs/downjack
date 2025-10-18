@@ -1,26 +1,51 @@
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 # vim: set ts=2 sw=2 tw=0 fo=cnqoj
 
-# Not working well, still figuring out how to tweak Goreleaser Free :/
-
 version: 2
 pro: false
 
 project_name: downjack
 
+metadata:
+  mod_timestamp: "{{ .CommitTimestamp }}"
+  # Do not add other fields!!! They are not available in Free tier!
+
 before:
   hooks:
     - go mod tidy
-    # you may remove this if you don't need go generate
-    - go generate ./...
+    - rm -rf completions
+    - mkdir completions
+    - sh -c 'go run . completion bash >./completions/downjack.bash'
+    - sh -c 'go run . completion zsh >./completions/downjack.zsh'
+    - sh -c 'go run . completion fish >./completions/downjack.fish'
 
 builds:
   - env:
       - CGO_ENABLED=0
     goos:
       - linux
-      - windows
       - darwin
+      - windows
+      - freebsd
+      - openbsd
+      - netbsd
+      - android
+    goarch:
+      - amd64
+      - arm64
+      - "386"
+      - arm
+    goarm:
+      - "7"
+    ignore:
+      - goos: android
+        goarch: amd64
+      - goos: android
+        goarch: arm
+      - goos: android
+        goarch: "386"
+      - goos: windows
+        goarch: arm
 
 archives:
   - formats: [tar.gz]
@@ -37,54 +62,144 @@ archives:
       - goos: windows
         formats: [zip]
 
+checksum:
+  name_template: "checksums.txt"
+
 changelog:
   sort: asc
+  disable: "{{ .IsNightly }}"
+  use: github
   filters:
     exclude:
-      - "^docs:"
+      - "^(build|ci): "
+      - "^chore: auto-update generated files$"
+      - "^chore: docs$"
+      - "^chore: schema update$"
+      - "^chore: schema$"
+      - "^chore: typo$"
+      - "^chore: update schema$"
+      - "^chore: update$"
+      - "^chore\\(legal\\): "
+      - "^chore\\(deps\\): "
+      - "^docs: update$"
       - "^test:"
+      - "^test\\("
+      - "merge conflict"
+      - "merge conflict"
+      - Merge branch
+      - Merge pull request
+      - Merge remote-tracking branch
+      - go mod tidy
+      - "^wip "
+      - "^wip:"
+  groups:
+    - title: "Deps"
+      regexp: "^.*\\(deps\\)*:+.*$"
+      order: 300
+    - title: "New!"
+      regexp: "^.*feat[(\\w)]*:+.*$"
+      order: 100
+    - title: "Fixed"
+      regexp: "^.*fix[(\\w)]*:+.*$"
+      order: 200
+    - title: "Docs"
+      regexp: "^.*docs[(\\w)]*:+.*$"
+      order: 400
+    - title: "Other stuff"
+      order: 9999
 
 release:
-  footer: >-
+  prerelease: auto
 
-    ---
+aur_sources:
+  - maintainers:
+      - "Charles Dong <chardon_cs@proton.me>"
+    description: "Set up your gitignore and license files like using a lumberjack"
+    homepage: "https://github.com/chardoncs/downjack"
+    license: "MIT"
 
-    Released by [GoReleaser](https://github.com/goreleaser/goreleaser).
+    private_key: "{{ .Env.AUR_KEY }}"
+    git_url: "ssh://aur@aur.archlinux.org/downjack.git"
 
-#aur_sources:
-#  - maintainers:
-#      - "Charles Dong <chardon_cs@proton.me>"
-#    description: "Set up your gitignore and license files like using a lumberjack"
-#    homepage: "https://github.com/chardoncs/downjack"
-#    license: "MIT"
-#
-#    private_key: "{{ .Env.AUR_KEY }}"
-#    git_url: "ssh://aur@aur.archlinux.org/downjack-bin.git"
-#
-#    provides:
-#      - downjack
-#
-#    conflicts:
-#      - downjack
-#
-#    depends:
-#      - git
-#
-#aurs:
-#  - maintainers:
-#      - "Charles Dong <chardon_cs@proton.me>"
-#    description: "Set up your gitignore and license files like using a lumberjack"
-#    homepage: "https://github.com/chardoncs/downjack"
-#    license: "MIT"
-#
-#    private_key: "{{ .Env.AUR_KEY }}"
-#    git_url: "ssh://aur@aur.archlinux.org/downjack-bin.git"
-#
-#    provides:
-#      - downjack
-#
-#    conflicts:
-#      - downjack
-#
-#    depends:
-#      - git
+    commit_author:
+      name: "Charles Dong"
+      email: "chardon_cs@proton.me"
+
+    makedepends:
+      - go
+
+    optdepends:
+      - git
+
+    prepare: |-
+      go mod download
+    build: |-
+      mkdir completions
+      mkdir manpages
+      export CGO_CPPFLAGS="${CPPFLAGS}"
+      export CGO_CFLAGS="${CFLAGS}"
+      export CGO_CXXFLAGS="${CXXFLAGS}"
+      export CGO_LDFLAGS="${LDFLAGS}"
+      export GOFLAGS="-buildmode=pie -trimpath -mod=readonly -modcacherw"
+      go build -ldflags="-w -s -buildid='' -linkmode=external -X main.version=v${pkgver}" .
+      ./downjack completion bash >./completions/downjack.bash
+      ./downjack completion zsh >./completions/downjack.zsh
+      ./downjack completion fish >./completions/downjack.fish
+      ./downjack man | gzip -c >./manpages/downjack.1.gz
+    package: |-
+      # bin
+      install -Dm755 "./downjack" "${pkgdir}/usr/bin/downjack"
+      # license
+      mkdir -p "${pkgdir}/usr/share/licenses/downjack/"
+      install -Dm644 ./LICENSE* "${pkgdir}/usr/share/licenses/downjack/"
+      # completions
+      mkdir -p "${pkgdir}/usr/share/bash-completion/completions/"
+      mkdir -p "${pkgdir}/usr/share/zsh/site-functions/"
+      mkdir -p "${pkgdir}/usr/share/fish/vendor_completions.d/"
+      install -Dm644 "./completions/downjack.bash" "${pkgdir}/usr/share/bash-completion/completions/downjack"
+      install -Dm644 "./completions/downjack.zsh" "${pkgdir}/usr/share/zsh/site-functions/_downjack"
+      install -Dm644 "./completions/downjack.fish" "${pkgdir}/usr/share/fish/vendor_completions.d/downjack.fish"
+      # readme
+      mkdir -pv "${pkgdir}/usr/share/doc/downjack/"
+      install -Dm644 README* "${pkgdir}/usr/share/doc/downjack/"
+
+aurs:
+  - maintainers:
+      - "Charles Dong <chardon_cs@proton.me>"
+    description: "Set up your gitignore and license files like using a lumberjack"
+    homepage: "https://github.com/chardoncs/downjack"
+    license: "MIT"
+
+    private_key: "{{ .Env.AUR_KEY }}"
+    git_url: "ssh://aur@aur.archlinux.org/downjack-bin.git"
+
+    commit_author:
+      name: "Charles Dong"
+      email: "chardon_cs@proton.me"
+
+    provides:
+      - downjack
+
+    conflicts:
+      - downjack
+
+    optdepends:
+      - git
+
+    package: |-
+      cd "${srcdir}/downjack_${pkgver}_Linux_${CARCH}"
+      # bin
+      install -Dm755 "./downjack" "${pkgdir}/usr/bin/downjack"
+      # license
+      mkdir -p "${pkgdir}/usr/share/licenses/downjack/"
+      install -Dm644 ./LICENSE* "${pkgdir}/usr/share/licenses/downjack/"
+      # completions
+      mkdir -p "${pkgdir}/usr/share/bash-completion/completions/"
+      mkdir -p "${pkgdir}/usr/share/zsh/site-functions/"
+      mkdir -p "${pkgdir}/usr/share/fish/vendor_completions.d/"
+      install -Dm644 "./completions/downjack.bash" "${pkgdir}/usr/share/bash-completion/completions/downjack"
+      install -Dm644 "./completions/downjack.zsh" "${pkgdir}/usr/share/zsh/site-functions/_downjack"
+      install -Dm644 "./completions/downjack.fish" "${pkgdir}/usr/share/fish/vendor_completions.d/downjack.fish"
+      # readme
+      mkdir -pv "${pkgdir}/usr/share/doc/downjack/"
+      install -Dm644 README* "${pkgdir}/usr/share/doc/downjack/"
