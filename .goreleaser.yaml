@@ -67,6 +67,9 @@ archives:
       - LICENSE*
       - completions/*
 
+source:
+  enabled: true
+
 checksum:
   name_template: "checksums.txt"
 
