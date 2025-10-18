@@ -195,7 +195,7 @@ aurs:
       - git
 
     package: |-
-      cd "${srcdir}/downjack_${pkgver}_Linux_${CARCH}"
+      cd "${srcdir}/downjack_Linux_${CARCH}"
       # bin
       install -Dm755 "./downjack" "${pkgdir}/usr/bin/downjack"
       # license
