@@ -5,7 +5,9 @@ A simple ~down jacket~ developer helper tool.
 It can set up `.gitignore` and licenses in your projects with damn-fast speed.
 
 ## Install 
-Use Golang package manager to install downjack, here's the command
+
+### From source
+
 ```bash
 go install github.com/chardoncs/downjack@latest
 ```
@@ -34,25 +36,17 @@ and that's it, your project is now ready to work with!
 
 `downjack [command]`
 
-### Available commands 
+### Commands
 - completion - Generate the autocompletion script for the specified shell
 - gitignore - Create or append a `.gitignore` file in the project (aliases: g/git/i/ignore)
 - license - Add an open source license (aliases: l)
 - help - Get help about any command
 
-### Flags 
+### Flags
 - `-h, --help` - get help for downjack
 - `-v, --version` - check the installed version 
 
 Use `downjack [command] --help` for more information about a command.
-
-## Install - manual way
-Go to [releases](https://github.com/chardoncs/downjack/releases/) and download latest binary for your OS, then move it to `/usr/local/bin/` and enjoy with simple `downjack` in terminal!
-
-## Building
-- Install [Go](https://go.dev/) and make sure it's working with `go version`
-- Clone repo
-- Run `go build` in repo directory, then move it to `/usr/local/bin/` or any other directory in your `$PATH`
 
 ## Tips
 
