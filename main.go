@@ -4,7 +4,7 @@ import (
 	"context"
 	"os"
 
-	"github.com/chardoncs/downjack/cmd"
+	"github.com/chardoncs/downjack/internal/cmd"
 	"github.com/charmbracelet/fang"
 )
 

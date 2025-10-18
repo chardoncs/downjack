@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/chardoncs/downjack/utils"
+	"github.com/chardoncs/downjack/internal/utils"
 )
 
 type SaveToOptions struct {

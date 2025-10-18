@@ -8,7 +8,7 @@ import (
 	"strings"
 	text_tmpl "text/template"
 
-	"github.com/chardoncs/downjack/utils"
+	"github.com/chardoncs/downjack/internal/utils"
 )
 
 type templateExecutor interface {

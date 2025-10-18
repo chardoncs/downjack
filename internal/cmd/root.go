@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/chardoncs/downjack/cmd/gitignore"
-	"github.com/chardoncs/downjack/cmd/license"
+	"github.com/chardoncs/downjack/internal/cmd/gitignore"
+	"github.com/chardoncs/downjack/internal/cmd/license"
 	"github.com/spf13/cobra"
 )
 

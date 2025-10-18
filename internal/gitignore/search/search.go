@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	lib "github.com/chardoncs/downjack/internal/gitignore"
-	"github.com/chardoncs/downjack/utils"
+	"github.com/chardoncs/downjack/internal/utils"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )

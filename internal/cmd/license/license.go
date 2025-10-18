@@ -9,7 +9,7 @@ import (
 
 	"github.com/chardoncs/downjack/internal/cli"
 	lib "github.com/chardoncs/downjack/internal/licenses"
-	"github.com/chardoncs/downjack/utils"
+	"github.com/chardoncs/downjack/internal/utils"
 	"github.com/spf13/cobra"
 )
 

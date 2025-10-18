@@ -10,7 +10,7 @@ import (
 	"github.com/chardoncs/downjack/internal/cli"
 	lib "github.com/chardoncs/downjack/internal/gitignore"
 	"github.com/chardoncs/downjack/internal/gitignore/search"
-	"github.com/chardoncs/downjack/utils"
+	"github.com/chardoncs/downjack/internal/utils"
 )
 
 var (
