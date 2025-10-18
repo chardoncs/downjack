@@ -1,6 +1,12 @@
 name: Lint
 on:
   push:
+    paths-ignore:
+      - .github/
+      - .goreleaser.yaml
+      - .gitignore
+      - README.md
+      - LICENSE
     branches:
       - main
   pull_request:
