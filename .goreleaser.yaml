@@ -81,7 +81,9 @@ changelog:
       - "^chore: update$"
       - "^chore\\(legal\\): "
       - "^chore\\(deps\\): "
+      - "^chore\\(readme\\): " # Legacy commit
       - "^docs: update$"
+      - "^lint:" # Legacy commit
       - "^test:"
       - "^test\\("
       - "merge conflict"
