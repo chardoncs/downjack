@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/chardoncs/downjack/internal/cli"
+	"github.com/chardoncs/downjack/internal/cli/ask"
 	lib "github.com/chardoncs/downjack/internal/gitignore"
 	"github.com/chardoncs/downjack/internal/gitignore/search"
 	"github.com/chardoncs/downjack/internal/utils"
@@ -60,7 +61,7 @@ var GitignoreCmd = &cobra.Command{
 
 			fmt.Println()
 
-			input, err := cli.AskInt("Choose template", len(result.Filenames))
+			input, err := ask.AskInt("Choose template", len(result.Filenames))
 			if err != nil {
 				return err
 			}
@@ -83,7 +84,7 @@ var GitignoreCmd = &cobra.Command{
 		if overwrite {
 			cli.Warnf("%s will be overwritten with template `%s`", targetFile, filename)
 
-			confirmed := cli.AskConfirm("Do you want to proceed?")
+			confirmed := ask.AskConfirm("Do you want to proceed?")
 			if !confirmed {
 				cli.Infof("Aborted")
 				return nil

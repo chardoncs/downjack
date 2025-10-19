@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/chardoncs/downjack/internal/cli"
+	"github.com/chardoncs/downjack/internal/cli/ask"
 	lib "github.com/chardoncs/downjack/internal/licenses"
 	"github.com/chardoncs/downjack/internal/utils"
 	"github.com/spf13/cobra"
@@ -54,7 +55,7 @@ var LicenseCmd = &cobra.Command{
 			}
 			cli.PrintItems(names)
 
-			num, err := cli.AskInt("Choose license", len(names))
+			num, err := ask.AskInt("Choose license", len(names))
 			if err != nil {
 				return err
 			}
@@ -96,7 +97,7 @@ var LicenseCmd = &cobra.Command{
 					candidateFilename = fmt.Sprintf("LICENSE-%s.%s", selected.Id, extName)
 				}
 
-				input := strings.ToLower(strings.TrimSpace(cli.Askf(`What do you want to do?
+				input := strings.ToLower(strings.TrimSpace(ask.Askf(`What do you want to do?
 - [a]dd a new file named %s
 - [o]verwrite the existing %s
 - [N]o action
