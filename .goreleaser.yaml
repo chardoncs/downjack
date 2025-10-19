@@ -85,6 +85,7 @@ changelog:
       - "^chore: schema update$"
       - "^chore: schema$"
       - "^chore: typo$"
+      - "^chore: fix typo$" # Preferred for new commits
       - "^chore: update schema$"
       - "^chore: update$"
       - "^chore\\(legal\\): "
