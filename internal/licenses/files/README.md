@@ -9,4 +9,4 @@ Templates can be following formats:
 - `.html`, `.htm`: HTML
 - `.*.tmpl`: Go [text/template](https://pkg.go.dev/text/template) or [html/template](https://pkg.go.dev/html/template) on top of one of the formats above
 
-License IDs can be found in [SPDX License List](https://spdx.org/licenses/)
+License IDs can be found in [SPDX License List](https://spdx.org/licenses/) (without the `-only` and `-or-later` suffixes)
