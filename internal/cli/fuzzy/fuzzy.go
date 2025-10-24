@@ -21,5 +21,5 @@ func Find(prompt string, options []string) (int, bool, error) {
 		return -1, false, nil
 	}
 
-	return mm.SelectedIndex(), true, nil
+	return mm.Index(), true, nil
 }

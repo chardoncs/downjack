@@ -1,6 +1,7 @@
 package fuzzy
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/charmbracelet/bubbles/v2/list"
@@ -22,5 +23,18 @@ func (self itemDelegate) Update(_ tea.Msg, _ *list.Model) tea.Cmd {
 }
 
 func (self itemDelegate) Render(w io.Writer, m list.Model, index int, listItem list.Item) {
-	// TODO
+	itemStr, ok := listItem.(item)
+	if !ok {
+		return
+	}
+
+	selectionMark := "  "
+	style := listItemStyle
+
+	if index == m.Index() {
+		selectionMark = "> "
+		style = selectedListItemStyle
+	}
+
+	fmt.Fprint(w, style.Render(fmt.Sprintf("%s %s", selectionMark, itemStr)))
 }
