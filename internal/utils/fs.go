@@ -1,6 +1,9 @@
 package utils
 
-import "os"
+import (
+	"embed"
+	"os"
+)
 
 func IsFileEmpty(fp *os.File) (bool, error) {
 	stat, err := fp.Stat()
@@ -9,4 +12,18 @@ func IsFileEmpty(fp *os.File) (bool, error) {
 	}
 
 	return stat.Size() == 0, nil
+}
+
+func ListFilenames(root embed.FS, prefix string) ([]string, error) {
+	dirEntries, err := root.ReadDir(prefix)
+	if err != nil {
+		return nil, err
+	}
+
+	strs := make([]string, len(dirEntries))
+	for i, entry := range dirEntries {
+		strs[i] = entry.Name()
+	}
+
+	return strs, nil
 }

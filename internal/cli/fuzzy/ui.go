@@ -47,8 +47,8 @@ func (self model) View() string {
 	)
 }
 
-func (self model) SelectedIndex() int {
-	return self.listModel.Index()
+func (self model) SelectedItem() string {
+	return self.listModel.SelectedItem().FilterValue()
 }
 
 func initialModel(prompt string, options []string) model {

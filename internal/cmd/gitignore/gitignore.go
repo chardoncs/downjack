@@ -9,6 +9,7 @@ import (
 
 	"github.com/chardoncs/downjack/internal/cli"
 	"github.com/chardoncs/downjack/internal/cli/ask"
+	"github.com/chardoncs/downjack/internal/cli/fuzzy"
 	lib "github.com/chardoncs/downjack/internal/gitignore"
 	"github.com/chardoncs/downjack/internal/gitignore/search"
 	"github.com/chardoncs/downjack/internal/utils"
@@ -25,18 +26,30 @@ var (
 var aliases = []string{"g", "git", "i", "ignore"}
 
 var GitignoreCmd = &cobra.Command{
-	Use:     "gitignore <name>",
+	Use:     "gitignore [name]",
 	Aliases: aliases,
 	Short: fmt.Sprintf(
 		"Create or append a `.gitignore` file in the project (aliases: %s)",
 		strings.Join(aliases, "/"),
 	),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 1 {
-			return utils.ArgsError(1, 0)
-		}
+		var name string
 
-		name := args[0]
+		if len(args) < 1 {
+			files, err := utils.ListFilenames(lib.Root, lib.DirPrefix)
+			if err != nil {
+				return err
+			}
+
+			searched, err := fuzzy.Find("Find a gitignore template", files)
+			if err != nil {
+				return err
+			}
+
+			name = searched
+		} else {
+			name = args[0]
+		}
 
 		result, err := search.SearchEmbed(name)
 		if err != nil {
