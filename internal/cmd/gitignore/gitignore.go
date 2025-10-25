@@ -46,6 +46,11 @@ var GitignoreCmd = &cobra.Command{
 				return err
 			}
 
+			if searched == "" {
+				cli.Warnf("Nothing is selected")
+				return nil
+			}
+
 			name = searched
 		} else {
 			name = args[0]

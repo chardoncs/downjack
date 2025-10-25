@@ -1,6 +1,9 @@
 package fuzzy
 
-import tea "github.com/charmbracelet/bubbletea/v2"
+import (
+	"github.com/chardoncs/downjack/internal/cli/fuzzy/ui"
+	tea "github.com/charmbracelet/bubbletea/v2"
+)
 
 // / Fuzzy find from a bunch of options
 // /
@@ -10,16 +13,21 @@ func Find(prompt string, options []string) (string, error) {
 		return "", nil
 	}
 
-	program := tea.NewProgram(initialModel(prompt, options))
+	program := tea.NewProgram(ui.InitialModel(prompt, options))
 	m, err := program.Run()
 	if err != nil {
 		return "", err
 	}
 
-	mm, ok := m.(model)
+	mm, ok := m.(ui.MainModel)
 	if !ok {
 		return "", nil
 	}
 
-	return mm.SelectedItem(), nil
+	selected, prs := mm.SelectedItem()
+	if prs {
+		return selected, nil
+	}
+
+	return "", nil
 }
