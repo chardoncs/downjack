@@ -12,6 +12,8 @@ type listModel struct {
 	filteredOptions []string
 
 	offset int
+
+	clearUiAndExit bool
 }
 
 func (self listModel) Init() tea.Cmd {
@@ -19,6 +21,11 @@ func (self listModel) Init() tea.Cmd {
 }
 
 func (self listModel) Update(msg tea.Msg) (listModel, tea.Cmd) {
+	if self.clearUiAndExit {
+		// UI must have been cleared already
+		return self, tea.Quit
+	}
+
 	switch msg := msg.(type) {
 	case filterUpdateMsg:
 		self.updateFilter(msg.text)
@@ -27,12 +34,22 @@ func (self listModel) Update(msg tea.Msg) (listModel, tea.Cmd) {
 		self.moveBy(1)
 	case prevItemMsg:
 		self.moveBy(-1)
+
+	case selectionTriggerMsg:
+		self.selected = true
+		self.clearUiAndExit = true
+	case abortMsg:
+		self.clearUiAndExit = true
 	}
 
 	return self, nil
 }
 
 func (self listModel) View() string {
+	if self.clearUiAndExit {
+		return ""
+	}
+
 	return ""
 }
 
@@ -55,6 +72,10 @@ func (self listModel) HandleKeyBindings(msg tea.KeyPressMsg) (bool, listModel, t
 	switch msg.String() {
 	case "enter":
 		model, cmd = self.Update(selectionTriggerMsg{})
+
+	case "ctrl+c":
+		model, cmd = self.Update(abortMsg{})
+
 	case "ctrl+n", "down":
 		model, cmd = self.Update(nextItemMsg{})
 	case "ctrl+p", "up":

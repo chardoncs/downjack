@@ -22,15 +22,10 @@ func (self MainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.KeyPressMsg:
-		switch msg.String() {
-		case "ctrl+c":
-			return self, tea.Quit
-		default:
-			var handled bool
-			handled, self.listModel, listCmd = self.listModel.HandleKeyBindings(msg)
-			if handled {
-				return self, listCmd
-			}
+		var handled bool
+		handled, self.listModel, listCmd = self.listModel.HandleKeyBindings(msg)
+		if handled {
+			return self, listCmd
 		}
 
 	case itemSelectedMsg:

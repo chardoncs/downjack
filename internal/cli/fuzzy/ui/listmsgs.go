@@ -12,3 +12,5 @@ type (
 type itemSelectedMsg struct {}
 
 type selectionTriggerMsg struct{}
+
+type abortMsg struct{}
