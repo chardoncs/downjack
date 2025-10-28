@@ -86,7 +86,7 @@ func (self *listModel) updateFilter(filter string) {
 }
 
 func (self *listModel) clampIndex() {
-	self.index = min(max(self.index, 0), len(self.options)-1)
+	self.index = min(max(self.index, 0), len(self.filteredOptions)-1)
 }
 
 func (self *listModel) moveBy(moves int) {
