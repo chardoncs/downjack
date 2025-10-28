@@ -92,6 +92,8 @@ func InitialModel(title string, options []string) MainModel {
 	im.ShowSuggestions = true
 	im.SetSuggestions(options)
 
+	im.VirtualCursor = true
+
 	return MainModel{
 		inputModel: im,
 		listModel:  initListModel(options),
