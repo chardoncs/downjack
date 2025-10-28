@@ -17,4 +17,6 @@ var (
 
 	listItemStyle         = lipgloss.NewStyle()
 	selectedListItemStyle = listItemStyle.Foreground(lipgloss.Color("170"))
+
+	listFooterStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("8"))
 )

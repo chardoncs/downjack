@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"fmt"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea/v2"
@@ -52,7 +53,15 @@ func (self listModel) View() string {
 		}
 	}
 
-	return listFrameStyle.Render(lipgloss.JoinVertical(lipgloss.Left, renderedItems...))
+	return lipgloss.JoinVertical(
+		lipgloss.Right,
+		listFrameStyle.Render(
+			lipgloss.JoinVertical(lipgloss.Left, renderedItems...),
+		),
+		listFooterStyle.Render(
+			fmt.Sprintf("%d/%d", self.index + 1, len(self.filteredOptions)),
+		),
+	)
 }
 
 func (self listModel) SelectedItem() (string, bool) {
