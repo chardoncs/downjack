@@ -78,11 +78,6 @@ func (self *listModel) updateFilter(filter string) {
 	self.index = 0
 
 	trimmedFilter := strings.TrimSpace(filter)
-	if trimmedFilter == "" {
-		self.filteredOptions = self.options
-		return
-	}
-
 	self.filteredOptions = fuzzy.FindFold(trimmedFilter, self.options)
 }
 
