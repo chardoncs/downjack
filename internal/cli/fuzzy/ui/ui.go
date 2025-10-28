@@ -38,7 +38,7 @@ func (self MainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var inputCmd tea.Cmd
 
 	self.inputModel, inputCmd = self.inputModel.Update(msg)
-	self.listModel, listCmd = self.listModel.Update(msg)
+	self.listModel, listCmd = self.listModel.Update(filterUpdateMsg{text: self.inputModel.Value()})
 
 	return self, tea.Batch(inputCmd, listCmd)
 }
@@ -79,6 +79,7 @@ func (self MainModel) handleKeyBindings(msg tea.KeyPressMsg) (bool, listModel, t
 
 	default:
 		handled = false
+		model = self.listModel
 	}
 
 	return handled, model, cmd
