@@ -22,10 +22,16 @@ func (self MainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.KeyPressMsg:
-		var handled bool
-		handled, self.listModel, listCmd = self.listModel.HandleKeyBindings(msg)
-		if handled {
-			return self, listCmd
+		switch msg.String() {
+		default:
+			var handled bool
+			handled, self.listModel, listCmd = self.handleKeyBindings(msg)
+			if handled {
+				return self, listCmd
+			}
+
+		case "ctrl+c":
+			return self, tea.Quit
 		}
 
 	case itemSelectedMsg:
@@ -53,9 +59,43 @@ func (self MainModel) SelectedItem() (string, bool) {
 	return self.listModel.SelectedItem()
 }
 
+// Handle key bindings
+//
+// returns: if message handled, the model, and the command
+func (self MainModel) handleKeyBindings(msg tea.KeyPressMsg) (bool, listModel, tea.Cmd) {
+	handled := true
+	var model listModel
+	var cmd tea.Cmd
+
+	switch msg.String() {
+	case "enter":
+		model, cmd = self.listModel.Update(selectionTriggerMsg{})
+
+	case "ctrl+c":
+		model, cmd = self.listModel.Update(abortMsg{})
+
+	case "ctrl+n", "down":
+		model, cmd = self.listModel.Update(nextItemMsg{})
+	case "ctrl+p", "up":
+		model, cmd = self.listModel.Update(prevItemMsg{})
+	// TODO: More
+
+	default:
+		handled = false
+	}
+
+	return handled, model, cmd
+}
+
 func InitialModel(title string, options []string) MainModel {
+	im := textinput.New()
+	im.Focus()
+
+	im.ShowSuggestions = true
+	im.SetSuggestions(options)
+
 	return MainModel{
-		inputModel: textinput.New(),
+		inputModel: im,
 		listModel:  initListModel(options),
 		title:      title,
 	}

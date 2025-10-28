@@ -3,12 +3,18 @@ package ui
 import "github.com/charmbracelet/lipgloss/v2"
 
 const (
-	listWidth  = 20
+	listWidth  = 25
 	listHeight = 14
 )
 
 var (
-	titleStyle            = lipgloss.NewStyle().PaddingLeft(2)
-	listItemStyle         = lipgloss.NewStyle().PaddingLeft(2)
+	titleStyle = lipgloss.NewStyle().PaddingLeft(2)
+
+	listFrameStyle = lipgloss.NewStyle().
+		Height(listHeight + 2).
+		Border(lipgloss.NormalBorder()).
+		Width(listWidth)
+
+	listItemStyle         = lipgloss.NewStyle()
 	selectedListItemStyle = listItemStyle.Foreground(lipgloss.Color("170"))
 )

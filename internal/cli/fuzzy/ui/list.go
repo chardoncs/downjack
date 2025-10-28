@@ -1,19 +1,21 @@
 package ui
 
-import tea "github.com/charmbracelet/bubbletea/v2"
+import (
+	"strings"
+
+	tea "github.com/charmbracelet/bubbletea/v2"
+	"github.com/charmbracelet/lipgloss/v2"
+	"github.com/lithammer/fuzzysearch/fuzzy"
+)
 
 type listModel struct {
 	index    int
 	selected bool
 
-	filter string
-
 	options         []string
 	filteredOptions []string
 
 	offset int
-
-	clearUiAndExit bool
 }
 
 func (self listModel) Init() tea.Cmd {
@@ -21,11 +23,6 @@ func (self listModel) Init() tea.Cmd {
 }
 
 func (self listModel) Update(msg tea.Msg) (listModel, tea.Cmd) {
-	if self.clearUiAndExit {
-		// UI must have been cleared already
-		return self, tea.Quit
-	}
-
 	switch msg := msg.(type) {
 	case filterUpdateMsg:
 		self.updateFilter(msg.text)
@@ -37,20 +34,25 @@ func (self listModel) Update(msg tea.Msg) (listModel, tea.Cmd) {
 
 	case selectionTriggerMsg:
 		self.selected = true
-		self.clearUiAndExit = true
-	case abortMsg:
-		self.clearUiAndExit = true
 	}
 
 	return self, nil
 }
 
 func (self listModel) View() string {
-	if self.clearUiAndExit {
-		return ""
+	renderedItems := make([]string, min(len(self.filteredOptions), listHeight))
+	// i is display index
+	for i := 0; i < listHeight && i < len(self.filteredOptions); i++ {
+		item := self.filteredOptions[i + self.offset]
+
+		if i + self.offset == self.index {
+			renderedItems[i] = selectedListItemStyle.Render("> "+item)
+		} else {
+			renderedItems[i] = listItemStyle.Render("  "+item)
+		}
 	}
 
-	return ""
+	return listFrameStyle.Render(lipgloss.JoinVertical(lipgloss.Left, renderedItems...))
 }
 
 func (self listModel) SelectedItem() (string, bool) {
@@ -61,41 +63,21 @@ func (self listModel) SelectedItem() (string, bool) {
 	return self.filteredOptions[self.index], true
 }
 
-// Handle key bindings
-//
-// returns: if message handled, the model, and the command
-func (self listModel) HandleKeyBindings(msg tea.KeyPressMsg) (bool, listModel, tea.Cmd) {
-	handled := true
-	var model listModel
-	var cmd tea.Cmd
+func (self *listModel) updateFilter(filter string) {
+	self.offset = 0
+	self.index = 0
 
-	switch msg.String() {
-	case "enter":
-		model, cmd = self.Update(selectionTriggerMsg{})
-
-	case "ctrl+c":
-		model, cmd = self.Update(abortMsg{})
-
-	case "ctrl+n", "down":
-		model, cmd = self.Update(nextItemMsg{})
-	case "ctrl+p", "up":
-		model, cmd = self.Update(prevItemMsg{})
-	// TODO: More
-
-	default:
-		handled = false
+	trimmedFilter := strings.TrimSpace(filter)
+	if trimmedFilter == "" {
+		self.filteredOptions = self.options
+		return
 	}
 
-	return handled, model, cmd
-}
-
-func (self *listModel) updateFilter(filter string) {
-	self.filter = filter
-	// TODO: filter logic
+	self.filteredOptions = fuzzy.FindFold(trimmedFilter, self.options)
 }
 
 func (self *listModel) clampIndex() {
-	self.index = min(max(self.index, 0), len(self.filteredOptions)-1)
+	self.index = min(max(self.index, 0), len(self.options)-1)
 }
 
 func (self *listModel) moveBy(moves int) {
@@ -103,17 +85,18 @@ func (self *listModel) moveBy(moves int) {
 	self.clampIndex()
 
 	topMostIndex := self.index - listHeight + 1
-	bottomMostIndex := self.index + listHeight - 1
+	bottomMostIndex := self.index + listHeight
 
 	if self.offset < topMostIndex {
 		self.offset = topMostIndex
-	} else if self.offset > bottomMostIndex {
-		self.offset = bottomMostIndex
+	} else if self.offset+listHeight > bottomMostIndex {
+		self.offset = bottomMostIndex - listHeight
 	}
 }
 
 func initListModel(options []string) listModel {
 	return listModel{
-		options: options,
+		options:         options,
+		filteredOptions: options,
 	}
 }
