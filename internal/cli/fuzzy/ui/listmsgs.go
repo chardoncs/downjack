@@ -9,8 +9,6 @@ type (
 	prevItemMsg struct{}
 )
 
-type itemSelectedMsg struct {}
-
 type selectionTriggerMsg struct{}
 
 type abortMsg struct{}

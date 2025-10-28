@@ -33,9 +33,6 @@ func (self MainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c":
 			return self, tea.Quit
 		}
-
-	case itemSelectedMsg:
-		return self, tea.Quit
 	}
 
 	var inputCmd tea.Cmd
