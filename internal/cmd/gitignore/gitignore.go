@@ -46,17 +46,17 @@ var GitignoreCmd = &cobra.Command{
 				names[i], _ = strings.CutSuffix(filename, ".gitignore")
 			}
 
-			searched, err := fuzzy.Find("Find a gitignore template", names)
+			selected, err := fuzzy.Find("Find a gitignore template", names)
 			if err != nil {
 				return err
 			}
 
-			if searched == "" {
+			if selected == "" {
 				cli.Warnf("Nothing is selected")
 				return nil
 			}
 
-			name = searched + ".gitignore"
+			name = selected + ".gitignore"
 		} else {
 			name = args[0]
 		}
