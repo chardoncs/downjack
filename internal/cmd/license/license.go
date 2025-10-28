@@ -9,6 +9,7 @@ import (
 
 	"github.com/chardoncs/downjack/internal/cli"
 	"github.com/chardoncs/downjack/internal/cli/ask"
+	"github.com/chardoncs/downjack/internal/cli/fuzzy"
 	lib "github.com/chardoncs/downjack/internal/licenses"
 	"github.com/chardoncs/downjack/internal/utils"
 	"github.com/spf13/cobra"
@@ -26,11 +27,28 @@ var LicenseCmd = &cobra.Command{
 	Aliases: aliases,
 	Short:   fmt.Sprintf("Add an open source license (aliases: %s)", strings.Join(aliases, "/")),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 1 {
-			return utils.ArgsError(1, 0)
-		}
+		var name string
 
-		name := args[0]
+		if len(args) < 1 {
+			files, err := utils.ListFilenames(lib.Root, lib.DirPrefix)
+			if err != nil {
+				return err
+			}
+
+			selected, err := fuzzy.Find("Find a license template", files)
+			if err != nil {
+				return err
+			}
+
+			if selected == "" {
+				cli.Warnf("Nothing is selected")
+				return nil
+			}
+
+			name = selected
+		} else {
+			name = args[0]
+		}
 
 		result, err := lib.SearchEmbed(name)
 		if err != nil {
