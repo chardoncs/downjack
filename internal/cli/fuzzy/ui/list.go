@@ -35,6 +35,7 @@ func (self listModel) Update(msg tea.Msg) (listModel, tea.Cmd) {
 
 	case selectionTriggerMsg:
 		self.selected = true
+		return self, tea.Quit
 	}
 
 	return self, nil
