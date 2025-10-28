@@ -13,6 +13,7 @@ var (
 	listFrameStyle = lipgloss.NewStyle().
 		Height(listHeight + 2).
 		Border(lipgloss.NormalBorder()).
+		BorderForeground(lipgloss.Color("69")).
 		Width(listWidth)
 
 	listItemStyle         = lipgloss.NewStyle()
