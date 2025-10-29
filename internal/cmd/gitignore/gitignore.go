@@ -11,7 +11,6 @@ import (
 	"github.com/chardoncs/downjack/internal/cli/ask"
 	"github.com/chardoncs/downjack/internal/cli/fuzzy"
 	lib "github.com/chardoncs/downjack/internal/gitignore"
-	"github.com/chardoncs/downjack/internal/gitignore/search"
 	"github.com/chardoncs/downjack/internal/utils"
 )
 
@@ -35,71 +34,45 @@ var GitignoreCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var name string
 
+		var err error
+
 		if len(args) < 1 {
-			files, err := utils.ListFilenames(lib.Root, lib.DirPrefix)
+			name, err = findFiles("")
 			if err != nil {
 				return err
 			}
-
-			names := make([]string, len(files))
-			for i, filename := range files {
-				names[i], _ = strings.CutSuffix(filename, ".gitignore")
-			}
-
-			selected, err := fuzzy.Find("Find a gitignore template", names)
-			if err != nil {
-				return err
-			}
-
-			if selected == "" {
-				cli.Warnf("Nothing is selected")
-				return nil
-			}
-
-			name = selected + ".gitignore"
 		} else {
 			name = args[0]
 		}
 
-		result, err := search.SearchEmbed(name)
+		filename := addSuffix(name)
+
+		// Try exact match
+		b, prs, err := utils.TryExactMatchFile(lib.Root, filepath.Join(lib.DirPrefix, filename))
 		if err != nil {
 			return err
 		}
 
-		if len(result.Filenames) < 1 {
-			return utils.NotFoundError("gitignore", name)
-		}
-
 		var content string
-		var filename string
 
-		if result.IsExact {
-			filename = result.Filenames[0]
+		if prs {
 			cli.Infof("Found exact template: %s", filename)
-
-			content = result.ExactContent
+			content = string(b)
 		} else {
-			cli.Infof("Found template(s):")
-			cli.PrintItems(result.Filenames)
+			cli.Infof("No exact template found")
 
-			fmt.Println()
-
-			input, err := ask.AskInt("Choose template", len(result.Filenames))
+			name, err = findFiles(name)
 			if err != nil {
 				return err
 			}
 
-			filename = result.Filenames[input-1]
-
-			cli.Infof("Selected %s", filename)
-
-			content, err = utils.ReadEmbedToString(
-				&lib.Root,
-				filepath.Join(lib.DirPrefix, filename),
-			)
+			filename = addSuffix(name)
+			b, err := lib.Root.ReadFile(filepath.Join(lib.DirPrefix, filename))
 			if err != nil {
 				return err
 			}
+
+			content = string(b)
 		}
 
 		targetFile := filepath.Join(dir, ".gitignore")
@@ -120,20 +93,11 @@ var GitignoreCmd = &cobra.Command{
 			)
 		}
 
-		var resultTitle string
-		if !noTitle {
-			if title == "" {
-				resultTitle = utils.GetFilePrefix(filename)
-			} else {
-				resultTitle = title
-			}
-		}
-
 		cli.InfoProgressf("Writing into .gitignore")
 
 		if err := lib.SaveTo(dir, content, lib.SaveToOptions{
 			Overwrite: overwrite,
-			Title:     resultTitle,
+			Title:     name,
 		}); err != nil {
 			fmt.Println()
 			return err
@@ -182,4 +146,35 @@ func init() {
 		false,
 		"list or search all available gitignore templates",
 	)
+}
+
+func findFiles(initialInput string) (string, error) {
+	files, err := utils.ListFilenames(lib.Root, lib.DirPrefix)
+	if err != nil {
+		return "", err
+	}
+
+	names := make([]string, len(files))
+	for i, filename := range files {
+		names[i], _ = strings.CutSuffix(filename, ".gitignore")
+	}
+
+	selected, err := fuzzy.Find("Find a gitignore template", names, initialInput)
+	if err != nil {
+		return "", err
+	}
+
+	if selected == "" {
+		cli.Warnf("Nothing is selected")
+		return "", nil
+	}
+
+	return selected, nil
+}
+
+func addSuffix(name string) string {
+	if strings.HasSuffix(name, ".gitignore") {
+		return name
+	}
+	return name + ".gitignore"
 }

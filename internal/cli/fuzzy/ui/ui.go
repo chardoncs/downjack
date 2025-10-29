@@ -85,7 +85,7 @@ func (self MainModel) handleKeyBindings(msg tea.KeyPressMsg) (bool, listModel, t
 	return handled, model, cmd
 }
 
-func InitialModel(title string, options []string) MainModel {
+func InitialModel(title string, options []string, initialInput string) MainModel {
 	im := textinput.New()
 	im.Focus()
 
@@ -93,6 +93,8 @@ func InitialModel(title string, options []string) MainModel {
 	im.SetSuggestions(options)
 
 	im.VirtualCursor = true
+
+	im.SetValue(initialInput)
 
 	return MainModel{
 		inputModel: im,

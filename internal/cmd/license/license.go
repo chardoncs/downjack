@@ -35,7 +35,7 @@ var LicenseCmd = &cobra.Command{
 				return err
 			}
 
-			selected, err := fuzzy.Find("Find a license template", files)
+			selected, err := fuzzy.Find("Find a license template", files, "")
 			if err != nil {
 				return err
 			}
