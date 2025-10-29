@@ -7,6 +7,12 @@ type filterUpdateMsg struct {
 type (
 	nextItemMsg struct{}
 	prevItemMsg struct{}
+
+	nextPageMsg struct{}
+	prevPageMsg struct{}
+
+	nextHalfPageMsg struct{}
+	prevHalfPageMsg struct{}
 )
 
 type selectionTriggerMsg struct{}

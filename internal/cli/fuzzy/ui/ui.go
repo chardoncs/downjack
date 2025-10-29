@@ -64,20 +64,35 @@ func (m MainModel) handleKeyBindings(msg tea.KeyPressMsg) (bool, listModel, tea.
 	var model listModel
 	var cmd tea.Cmd
 
+	var downMsg tea.Msg
+
 	switch msg.String() {
 	case "enter":
-		model, cmd = m.listModel.Update(selectionTriggerMsg{})
+		downMsg = selectionTriggerMsg{}
 
 	case "ctrl+c":
-		model, cmd = m.listModel.Update(abortMsg{})
+		downMsg = abortMsg{}
 
 	case "ctrl+n", "down":
-		model, cmd = m.listModel.Update(nextItemMsg{})
+		downMsg = nextItemMsg{}
 	case "ctrl+p", "up":
-		model, cmd = m.listModel.Update(prevItemMsg{})
-	// TODO: More
+		downMsg = prevItemMsg{}
 
-	default:
+	case "ctrl+f", "ctrl+v":
+		downMsg = nextPageMsg{}
+	case "ctrl+b", "meta+v":
+		downMsg = prevPageMsg{}
+
+	case "ctrl+d":
+		downMsg = nextHalfPageMsg{}
+
+	case "ctrl+u":
+		downMsg = prevHalfPageMsg{}
+	}
+
+	if downMsg != nil {
+		model, cmd = m.listModel.Update(downMsg)
+	} else {
 		handled = false
 		model = m.listModel
 	}

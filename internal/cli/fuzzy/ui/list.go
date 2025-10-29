@@ -35,6 +35,18 @@ func (m listModel) Update(msg tea.Msg) (listModel, tea.Cmd) {
 	case prevItemMsg:
 		m.moveBy(-1)
 
+	case nextPageMsg:
+		m.moveBy(listHeight)
+
+	case prevPageMsg:
+		m.moveBy(-listHeight)
+
+	case nextHalfPageMsg:
+		m.moveBy(listHeight/2 + 1)
+
+	case prevHalfPageMsg:
+		m.moveBy(-listHeight/2 - 1)
+
 	case selectionTriggerMsg:
 		m.selected = true
 		return m, tea.Quit
