@@ -11,10 +11,10 @@ var (
 	titleStyle = lipgloss.NewStyle().PaddingLeft(2)
 
 	listFrameStyle = lipgloss.NewStyle().
-		Height(listHeight + 2).
-		Border(lipgloss.NormalBorder()).
-		BorderForeground(lipgloss.Color("69")).
-		Width(listWidth)
+			Height(listHeight + 2).
+			Border(lipgloss.NormalBorder()).
+			BorderForeground(lipgloss.Color("69")).
+			Width(listWidth)
 
 	listItemStyle         = lipgloss.NewStyle()
 	selectedListItemStyle = listItemStyle.Foreground(lipgloss.Color("170"))
