@@ -28,7 +28,7 @@ func searchWords(keyword string, dir []fs.DirEntry) []string {
 	result := make([]string, 0, len(dir))
 
 	for _, item := range dir {
-		name, _ := strings.CutSuffix(item.Name(), ".gitignore")
+		name, _ := strings.CutSuffix(item.Name(), gitignoreSuffix)
 
 		if strings.ToLower(name) == lowered {
 			result = append(result, item.Name())
