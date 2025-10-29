@@ -2,7 +2,6 @@ package utils
 
 import (
 	"embed"
-	"errors"
 	"os"
 )
 
@@ -27,17 +26,4 @@ func ListFilenames(root embed.FS, prefix string) ([]string, error) {
 	}
 
 	return strs, nil
-}
-
-func TryExactMatchFile(root embed.FS, fpath string) ([]byte, bool, error) {
-	b, err := root.ReadFile(fpath)
-	if err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-			return nil, false, nil
-		}
-
-		return nil, false, err
-	}
-
-	return b, true, nil
 }

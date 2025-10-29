@@ -65,6 +65,10 @@ var LicenseCmd = &cobra.Command{
 				if err != nil {
 					return err
 				}
+				if name == "" {
+					cli.Infof("No file selected")
+					return nil
+				}
 
 				selected = &lib.MatchedItem{
 					Id:       lib.GetLicenseId(name),

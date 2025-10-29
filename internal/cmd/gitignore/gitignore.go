@@ -11,6 +11,7 @@ import (
 	"github.com/chardoncs/downjack/internal/cli/ask"
 	"github.com/chardoncs/downjack/internal/cli/fuzzy"
 	lib "github.com/chardoncs/downjack/internal/gitignore"
+	"github.com/chardoncs/downjack/internal/gitignore/search"
 	"github.com/chardoncs/downjack/internal/utils"
 )
 
@@ -51,17 +52,17 @@ var GitignoreCmd = &cobra.Command{
 
 		filename := addSuffix(name)
 
-		// Try exact match
-		b, prs, err := utils.TryExactMatchFile(lib.Root, filepath.Join(lib.DirPrefix, filename))
+		// Try search
+		result, err := search.MatchFiles(name)
 		if err != nil {
 			return err
 		}
 
 		var content string
 
-		if prs {
+		if len(result.Filenames) == 1 {
 			cli.Infof("Found exact template: %s", filename)
-			content = string(b)
+			filename = result.Filenames[0]
 		} else {
 			cli.Infof("No exact template found")
 
@@ -70,14 +71,20 @@ var GitignoreCmd = &cobra.Command{
 				return err
 			}
 
-			filename = addSuffix(name)
-			b, err := lib.Root.ReadFile(filepath.Join(lib.DirPrefix, filename))
-			if err != nil {
-				return err
+			if name == "" {
+				cli.Infof("No file selected")
+				return nil
 			}
 
-			content = string(b)
+			filename = addSuffix(name)
 		}
+
+		b, err := lib.Root.ReadFile(filepath.Join(lib.DirPrefix, filename))
+		if err != nil {
+			return err
+		}
+
+		content = string(b)
 
 		targetFile := filepath.Join(dir, ".gitignore")
 
