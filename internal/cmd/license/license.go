@@ -9,6 +9,7 @@ import (
 
 	"github.com/chardoncs/downjack/internal/cli"
 	"github.com/chardoncs/downjack/internal/cli/ask"
+	"github.com/chardoncs/downjack/internal/cli/fuzzy"
 	lib "github.com/chardoncs/downjack/internal/licenses"
 	"github.com/chardoncs/downjack/internal/utils"
 	"github.com/spf13/cobra"
@@ -26,47 +27,50 @@ var LicenseCmd = &cobra.Command{
 	Aliases: aliases,
 	Short:   fmt.Sprintf("Add an open source license (aliases: %s)", strings.Join(aliases, "/")),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 1 {
-			return utils.ArgsError(1, 0)
-		}
-
-		name := args[0]
-
-		result, err := lib.SearchEmbed(name)
-		if err != nil {
-			return err
-		}
-
-		if len(result.Items) < 1 {
-			return utils.NotFoundError("license", name)
-		}
+		var name string
+		var err error
 
 		var selected *lib.MatchedItem
 
-		if result.Exact {
-			selected = &result.Items[0]
-			cli.Infof("Found exact license: %s", selected.Id)
-		} else {
-			cli.Infof("Found license(s):")
-
-			names := make([]string, len(result.Items))
-			for i, item := range result.Items {
-				names[i] = item.Filename
-			}
-			cli.PrintItems(names)
-
-			num, err := ask.AskInt("Choose license", len(names))
+		if len(args) < 1 {
+			name, err = findFiles("")
 			if err != nil {
 				return err
 			}
 
-			selected = &result.Items[num-1]
-		}
+			if name == "" {
+				cli.Warnf("Nothing is selected")
+				return nil
+			}
 
-		// Future-proof check
-		if selected == nil {
-			cli.Infof("Nothing is selected")
-			return nil
+			selected = &lib.MatchedItem{
+				Id:       lib.GetLicenseId(name),
+				Filename: name,
+			}
+		} else {
+			name = args[0]
+
+			// Try find matched files
+			result, err := lib.SearchEmbed(name)
+			if err != nil {
+				return err
+			}
+
+			if len(result.Items) == 1 {
+				selected = &result.Items[0]
+				cli.Infof("Found exact license: %s", selected.Id)
+			} else {
+				cli.Infof("Not sure which one")
+				name, err = findFiles(name)
+				if err != nil {
+					return err
+				}
+
+				selected = &lib.MatchedItem{
+					Id:       lib.GetLicenseId(name),
+					Filename: name,
+				}
+			}
 		}
 
 		targetFile := "LICENSE"
@@ -165,4 +169,18 @@ func licenseFileExists(target string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func findFiles(initialInput string) (string, error) {
+	files, err := utils.ListFilenames(lib.Root, lib.DirPrefix)
+	if err != nil {
+		return "", err
+	}
+
+	selected, err := fuzzy.Find("Find a license template", files, initialInput)
+	if err != nil {
+		return "", err
+	}
+
+	return selected, nil
 }

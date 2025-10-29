@@ -13,7 +13,6 @@ type MatchedItem struct {
 
 type SearchResult struct {
 	Items []MatchedItem
-	Exact bool
 }
 
 func SearchEmbed(keyword string) (*SearchResult, error) {
@@ -29,18 +28,13 @@ func SearchEmbed(keyword string) (*SearchResult, error) {
 
 	for _, entry := range dir {
 		filename := entry.Name()
-		loweredName := strings.ToLower(filename)
+		id := GetLicenseId(filename)
+		loweredId := strings.ToLower(id)
 
-		if strings.Contains(loweredName, lowerKeyword) {
+		if lowerKeyword == loweredId {
 			item := MatchedItem{
-				Id:       getLicenseId(filename),
+				Id:       id,
 				Filename: filename,
-			}
-
-			if strings.ToLower(item.Id) == lowerKeyword {
-				result.Items = []MatchedItem{item}
-				result.Exact = true
-				break
 			}
 
 			result.Items = append(result.Items, item)
@@ -50,7 +44,7 @@ func SearchEmbed(keyword string) (*SearchResult, error) {
 	return result, nil
 }
 
-func getLicenseId(filename string) (result string) {
+func GetLicenseId(filename string) (result string) {
 	result, _ = strings.CutSuffix(filename, ".tmpl")
 	result = ext.GetRecognizedExtPattern().
 		ReplaceAllString(result, "")
