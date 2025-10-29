@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	lib "github.com/chardoncs/downjack/internal/gitignore"
-	"github.com/chardoncs/downjack/internal/utils"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
@@ -45,7 +44,7 @@ func exactMatchEmbedFile(
 		return nil, err
 	}
 
-	content, err := utils.ReadEmbedToString(&lib.Root, filepath.Join(lib.DirPrefix, filename))
+	b, err := lib.Root.ReadFile(filepath.Join(lib.DirPrefix, filename))
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +52,7 @@ func exactMatchEmbedFile(
 	return &SearchResult{
 		Filenames:    []string{filename},
 		IsExact:      true,
-		ExactContent: content,
+		ExactContent: string(b),
 	}, nil
 }
 

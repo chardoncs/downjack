@@ -13,7 +13,9 @@ type listModel struct {
 	index    int
 	selected bool
 
-	options         []string
+	options []string
+
+	filter          string
 	filteredOptions []string
 
 	offset int
@@ -26,7 +28,7 @@ func (self listModel) Init() tea.Cmd {
 func (self listModel) Update(msg tea.Msg) (listModel, tea.Cmd) {
 	switch msg := msg.(type) {
 	case filterUpdateMsg:
-		self.updateFilter(msg.text)
+		self.updateFilter(msg.text, false)
 
 	case nextItemMsg:
 		self.moveBy(1)
@@ -45,12 +47,12 @@ func (self listModel) View() string {
 	renderedItems := make([]string, min(len(self.filteredOptions), listHeight))
 	// i is display index
 	for i := 0; i < listHeight && i < len(self.filteredOptions); i++ {
-		item := self.filteredOptions[i + self.offset]
+		item := self.filteredOptions[i+self.offset]
 
-		if i + self.offset == self.index {
-			renderedItems[i] = selectedListItemStyle.Render("> "+item)
+		if i+self.offset == self.index {
+			renderedItems[i] = selectedListItemStyle.Render("> " + item)
 		} else {
-			renderedItems[i] = listItemStyle.Render("  "+item)
+			renderedItems[i] = listItemStyle.Render("  " + item)
 		}
 	}
 
@@ -60,7 +62,7 @@ func (self listModel) View() string {
 			lipgloss.JoinVertical(lipgloss.Left, renderedItems...),
 		),
 		listFooterStyle.Render(
-			fmt.Sprintf("%d/%d", self.index + 1, len(self.filteredOptions)),
+			fmt.Sprintf("%d/%d", self.index+1, len(self.filteredOptions)),
 		),
 	)
 }
@@ -73,11 +75,16 @@ func (self listModel) SelectedItem() (string, bool) {
 	return self.filteredOptions[self.index], true
 }
 
-func (self *listModel) updateFilter(filter string) {
+func (self *listModel) updateFilter(filter string, force bool) {
+	trimmedFilter := strings.TrimSpace(filter)
+	if !force && trimmedFilter == self.filter {
+		return
+	}
+
 	self.offset = 0
 	self.index = 0
 
-	trimmedFilter := strings.TrimSpace(filter)
+	self.filter = trimmedFilter
 	self.filteredOptions = fuzzy.FindFold(trimmedFilter, self.options)
 }
 
@@ -99,9 +106,13 @@ func (self *listModel) moveBy(moves int) {
 	}
 }
 
-func initListModel(options []string) listModel {
-	return listModel{
+func initListModel(options []string, initialFilter string) listModel {
+	m := listModel{
 		options:         options,
-		filteredOptions: options,
+		filter:          strings.TrimSpace(initialFilter),
 	}
+
+	m.updateFilter(m.filter, true)
+
+	return m
 }

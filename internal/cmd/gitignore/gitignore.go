@@ -33,13 +33,17 @@ var GitignoreCmd = &cobra.Command{
 	),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var name string
-
 		var err error
 
 		if len(args) < 1 {
 			name, err = findFiles("")
 			if err != nil {
 				return err
+			}
+
+			if name == "" {
+				cli.Warnf("Nothing is selected")
+				return nil
 			}
 		} else {
 			name = args[0]
@@ -162,11 +166,6 @@ func findFiles(initialInput string) (string, error) {
 	selected, err := fuzzy.Find("Find a gitignore template", names, initialInput)
 	if err != nil {
 		return "", err
-	}
-
-	if selected == "" {
-		cli.Warnf("Nothing is selected")
-		return "", nil
 	}
 
 	return selected, nil

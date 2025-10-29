@@ -98,7 +98,7 @@ func InitialModel(title string, options []string, initialInput string) MainModel
 
 	return MainModel{
 		inputModel: im,
-		listModel:  initListModel(options),
+		listModel:  initListModel(options, initialInput),
 		title:      title,
 	}
 }
