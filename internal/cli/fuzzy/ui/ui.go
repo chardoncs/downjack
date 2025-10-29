@@ -13,11 +13,11 @@ type MainModel struct {
 	title string
 }
 
-func (self MainModel) Init() tea.Cmd {
+func (m MainModel) Init() tea.Cmd {
 	return nil
 }
 
-func (self MainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m MainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var listCmd tea.Cmd
 
 	switch msg := msg.(type) {
@@ -25,61 +25,61 @@ func (self MainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		default:
 			var handled bool
-			handled, self.listModel, listCmd = self.handleKeyBindings(msg)
+			handled, m.listModel, listCmd = m.handleKeyBindings(msg)
 			if handled {
-				return self, listCmd
+				return m, listCmd
 			}
 
 		case "ctrl+c":
-			return self, tea.Quit
+			return m, tea.Quit
 		}
 	}
 
 	var inputCmd tea.Cmd
 
-	self.inputModel, inputCmd = self.inputModel.Update(msg)
-	self.listModel, listCmd = self.listModel.Update(filterUpdateMsg{text: self.inputModel.Value()})
+	m.inputModel, inputCmd = m.inputModel.Update(msg)
+	m.listModel, listCmd = m.listModel.Update(filterUpdateMsg{text: m.inputModel.Value()})
 
-	return self, tea.Batch(inputCmd, listCmd)
+	return m, tea.Batch(inputCmd, listCmd)
 }
 
-func (self MainModel) View() string {
+func (m MainModel) View() string {
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
-		titleStyle.Render(self.title),
-		self.inputModel.View(),
-		self.listModel.View(),
+		titleStyle.Render(m.title),
+		m.inputModel.View(),
+		m.listModel.View(),
 	)
 }
 
-func (self MainModel) SelectedItem() (string, bool) {
-	return self.listModel.SelectedItem()
+func (m MainModel) SelectedItem() (string, bool) {
+	return m.listModel.SelectedItem()
 }
 
 // Handle key bindings
 //
 // returns: if message handled, the model, and the command
-func (self MainModel) handleKeyBindings(msg tea.KeyPressMsg) (bool, listModel, tea.Cmd) {
+func (m MainModel) handleKeyBindings(msg tea.KeyPressMsg) (bool, listModel, tea.Cmd) {
 	handled := true
 	var model listModel
 	var cmd tea.Cmd
 
 	switch msg.String() {
 	case "enter":
-		model, cmd = self.listModel.Update(selectionTriggerMsg{})
+		model, cmd = m.listModel.Update(selectionTriggerMsg{})
 
 	case "ctrl+c":
-		model, cmd = self.listModel.Update(abortMsg{})
+		model, cmd = m.listModel.Update(abortMsg{})
 
 	case "ctrl+n", "down":
-		model, cmd = self.listModel.Update(nextItemMsg{})
+		model, cmd = m.listModel.Update(nextItemMsg{})
 	case "ctrl+p", "up":
-		model, cmd = self.listModel.Update(prevItemMsg{})
+		model, cmd = m.listModel.Update(prevItemMsg{})
 	// TODO: More
 
 	default:
 		handled = false
-		model = self.listModel
+		model = m.listModel
 	}
 
 	return handled, model, cmd

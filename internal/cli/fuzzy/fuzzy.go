@@ -5,9 +5,9 @@ import (
 	tea "github.com/charmbracelet/bubbletea/v2"
 )
 
-// Fuzzy find from a bunch of options
+// Fuzzy find from a bunch of options.
 //
-// Returns selected item ("" for N/A), if selected (for ensuring check), and possible error
+// Returns selected item ("" for N/A), if selected (for ensuring check), and possible error.
 func Find(prompt string, options []string, initialInput string) (string, error) {
 	if len(options) < 1 {
 		return "", nil

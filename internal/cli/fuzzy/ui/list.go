@@ -21,35 +21,35 @@ type listModel struct {
 	offset int
 }
 
-func (self listModel) Init() tea.Cmd {
+func (m listModel) Init() tea.Cmd {
 	return nil
 }
 
-func (self listModel) Update(msg tea.Msg) (listModel, tea.Cmd) {
+func (m listModel) Update(msg tea.Msg) (listModel, tea.Cmd) {
 	switch msg := msg.(type) {
 	case filterUpdateMsg:
-		self.updateFilter(msg.text, false)
+		m.updateFilter(msg.text, false)
 
 	case nextItemMsg:
-		self.moveBy(1)
+		m.moveBy(1)
 	case prevItemMsg:
-		self.moveBy(-1)
+		m.moveBy(-1)
 
 	case selectionTriggerMsg:
-		self.selected = true
-		return self, tea.Quit
+		m.selected = true
+		return m, tea.Quit
 	}
 
-	return self, nil
+	return m, nil
 }
 
-func (self listModel) View() string {
-	renderedItems := make([]string, min(len(self.filteredOptions), listHeight))
+func (m listModel) View() string {
+	renderedItems := make([]string, min(len(m.filteredOptions), listHeight))
 	// i is display index
-	for i := 0; i < listHeight && i < len(self.filteredOptions); i++ {
-		item := self.filteredOptions[i+self.offset]
+	for i := 0; i < listHeight && i < len(m.filteredOptions); i++ {
+		item := m.filteredOptions[i+m.offset]
 
-		if i+self.offset == self.index {
+		if i+m.offset == m.index {
 			renderedItems[i] = selectedListItemStyle.Render("> " + item)
 		} else {
 			renderedItems[i] = listItemStyle.Render("  " + item)
@@ -62,54 +62,54 @@ func (self listModel) View() string {
 			lipgloss.JoinVertical(lipgloss.Left, renderedItems...),
 		),
 		listFooterStyle.Render(
-			fmt.Sprintf("%d/%d", self.index+1, len(self.filteredOptions)),
+			fmt.Sprintf("%d/%d", m.index+1, len(m.filteredOptions)),
 		),
 	)
 }
 
-func (self listModel) SelectedItem() (string, bool) {
-	if !self.selected || self.index < 0 || self.index >= len(self.filteredOptions) {
+func (m listModel) SelectedItem() (string, bool) {
+	if !m.selected || m.index < 0 || m.index >= len(m.filteredOptions) {
 		return "", false
 	}
 
-	return self.filteredOptions[self.index], true
+	return m.filteredOptions[m.index], true
 }
 
-func (self *listModel) updateFilter(filter string, force bool) {
+func (m *listModel) updateFilter(filter string, force bool) {
 	trimmedFilter := strings.TrimSpace(filter)
-	if !force && trimmedFilter == self.filter {
+	if !force && trimmedFilter == m.filter {
 		return
 	}
 
-	self.offset = 0
-	self.index = 0
+	m.offset = 0
+	m.index = 0
 
-	self.filter = trimmedFilter
-	self.filteredOptions = fuzzy.FindFold(trimmedFilter, self.options)
+	m.filter = trimmedFilter
+	m.filteredOptions = fuzzy.FindFold(trimmedFilter, m.options)
 }
 
-func (self *listModel) clampIndex() {
-	self.index = min(max(self.index, 0), len(self.filteredOptions)-1)
+func (m *listModel) clampIndex() {
+	m.index = min(max(m.index, 0), len(m.filteredOptions)-1)
 }
 
-func (self *listModel) moveBy(moves int) {
-	self.index = self.index + moves
-	self.clampIndex()
+func (m *listModel) moveBy(moves int) {
+	m.index = m.index + moves
+	m.clampIndex()
 
-	topMostIndex := self.index - listHeight + 1
-	bottomMostIndex := self.index + listHeight
+	topMostIndex := m.index - listHeight + 1
+	bottomMostIndex := m.index + listHeight
 
-	if self.offset < topMostIndex {
-		self.offset = topMostIndex
-	} else if self.offset+listHeight > bottomMostIndex {
-		self.offset = bottomMostIndex - listHeight
+	if m.offset < topMostIndex {
+		m.offset = topMostIndex
+	} else if m.offset+listHeight > bottomMostIndex {
+		m.offset = bottomMostIndex - listHeight
 	}
 }
 
 func initListModel(options []string, initialFilter string) listModel {
 	m := listModel{
-		options:         options,
-		filter:          strings.TrimSpace(initialFilter),
+		options: options,
+		filter:  strings.TrimSpace(initialFilter),
 	}
 
 	m.updateFilter(m.filter, true)
