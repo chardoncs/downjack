@@ -2,6 +2,8 @@
 
 A simple ~down jacket~ developer helper tool.
 
+![Demo screenshot](./docs/demo.png)
+
 It can set up `.gitignore` and licenses in your projects with damn-fast speed.
 
 ## Install 
@@ -20,6 +22,8 @@ For example, if you want to set up `.gitignore` for a Go project:
 downjack gitignore go
 # OR simply
 downjack g go
+# OR fuzzy find
+downjack g
 ```
 
 then create a license file with `MIT` license:
@@ -28,6 +32,8 @@ then create a license file with `MIT` license:
 downjack license mit
 # OR simply
 downjack l mit
+# OR again fuzzy find
+downjack l
 ```
 
 and that's it, your project is now ready to work with!
