@@ -32,6 +32,8 @@ and that's it, your project is now ready to work with!
 
 ## Install 
 
+> More installation methods are coming!
+
 ### Binary
 
 Go to the [release page](https://github.com/chardoncs/downjack/releases) and find the binary for your OS.
