@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea/v2"
@@ -93,11 +94,25 @@ func (m *listModel) updateFilter(filter string, force bool) {
 		return
 	}
 
+	if trimmedFilter == "" {
+		m.filteredOptions = m.options
+		return
+	}
+
 	m.offset = 0
 	m.index = 0
 
 	m.filter = trimmedFilter
-	m.filteredOptions = fuzzy.FindFold(trimmedFilter, m.options)
+
+	ranks := fuzzy.RankFindFold(trimmedFilter, m.options)
+	sort.Sort(ranks)
+
+	results := make([]string, len(ranks))
+	for i, rank := range ranks {
+		results[i] = rank.Target
+	}
+
+	m.filteredOptions = results
 }
 
 func (m *listModel) clampIndex() {
