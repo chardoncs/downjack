@@ -63,8 +63,8 @@ var GitignoreCmd = &cobra.Command{
 		var content string
 
 		if len(result.Filenames) == 1 {
-			cli.Infof("Found exact template: %s", filename)
 			filename = result.Filenames[0]
+			cli.Infof("Found exact template: %s", filename)
 		} else {
 			cli.Infof("No exact template found")
 

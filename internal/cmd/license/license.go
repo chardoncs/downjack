@@ -60,7 +60,7 @@ var LicenseCmd = &cobra.Command{
 
 			if len(result.Items) == 1 {
 				selected = &result.Items[0]
-				cli.Infof("Found exact license: %s", selected.Id)
+				cli.Infof("Found exact license: %s", selected.Filename)
 			} else {
 				cli.Infof("Not sure which one")
 				name, err = findFiles(name)
