@@ -47,12 +47,12 @@ var GitignoreCmd = &cobra.Command{
 				return nil
 			}
 		} else if len(args) > 1 {
-			return fmt.Errorf("Expect 1 argument, found %d", len(args))
+			return fmt.Errorf("expect 1 argument, found %d", len(args))
 		} else {
 			name = args[0]
 		}
 
-		filename := addSuffix(name)
+		var filename string
 
 		// Try search
 		result, err := search.MatchFiles(name)
