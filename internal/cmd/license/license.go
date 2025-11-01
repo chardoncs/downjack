@@ -47,6 +47,8 @@ var LicenseCmd = &cobra.Command{
 				Id:       lib.GetLicenseId(name),
 				Filename: name,
 			}
+		} else if len(args) > 1 {
+			return fmt.Errorf("Expect 1 argument, found %d", len(args))
 		} else {
 			name = args[0]
 
