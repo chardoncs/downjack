@@ -23,7 +23,7 @@ var (
 var aliases = []string{"l"}
 
 var LicenseCmd = &cobra.Command{
-	Use:     "license <name>",
+	Use:     "license",
 	Aliases: aliases,
 	Short:   fmt.Sprintf("Add an open source license (aliases: %s)", strings.Join(aliases, "/")),
 	RunE: func(cmd *cobra.Command, args []string) error {
