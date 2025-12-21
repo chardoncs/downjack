@@ -1,4 +1,4 @@
-module github.com/chardoncs/downjack
+module go.chardoncs.dev/downjack
 
 go 1.25.5
 

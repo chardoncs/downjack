@@ -57,7 +57,7 @@ paru -S downjack-bin
 ### Go
 
 ```bash
-go install github.com/chardoncs/downjack@latest
+go install go.chardoncs.dev/downjack@latest
 ```
 
 ## Tips

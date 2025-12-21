@@ -1,7 +1,7 @@
 package fuzzy
 
 import (
-	"github.com/chardoncs/downjack/internal/cli/fuzzy/ui"
+	"go.chardoncs.dev/downjack/internal/cli/fuzzy/ui"
 	tea "github.com/charmbracelet/bubbletea/v2"
 )
 

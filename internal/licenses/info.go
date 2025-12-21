@@ -3,7 +3,7 @@ package licenses
 import (
 	"time"
 
-	"github.com/chardoncs/downjack/internal/utils"
+	"go.chardoncs.dev/downjack/internal/utils"
 )
 
 type LicenseInfo struct {

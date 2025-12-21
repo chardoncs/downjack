@@ -3,7 +3,7 @@ package licenses
 import (
 	"strings"
 
-	"github.com/chardoncs/downjack/internal/licenses/regex/ext"
+	"go.chardoncs.dev/downjack/internal/licenses/regex/ext"
 )
 
 type MatchedItem struct {

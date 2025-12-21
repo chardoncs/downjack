@@ -4,7 +4,7 @@ import (
 	"io/fs"
 	"strings"
 
-	lib "github.com/chardoncs/downjack/internal/gitignore"
+	lib "go.chardoncs.dev/downjack/internal/gitignore"
 )
 
 const gitignoreSuffix = ".gitignore"

@@ -7,12 +7,12 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/chardoncs/downjack/internal/cli"
-	"github.com/chardoncs/downjack/internal/cli/ask"
-	"github.com/chardoncs/downjack/internal/cli/fuzzy"
-	lib "github.com/chardoncs/downjack/internal/gitignore"
-	"github.com/chardoncs/downjack/internal/gitignore/search"
-	"github.com/chardoncs/downjack/internal/utils"
+	"go.chardoncs.dev/downjack/internal/cli"
+	"go.chardoncs.dev/downjack/internal/cli/ask"
+	"go.chardoncs.dev/downjack/internal/cli/fuzzy"
+	lib "go.chardoncs.dev/downjack/internal/gitignore"
+	"go.chardoncs.dev/downjack/internal/gitignore/search"
+	"go.chardoncs.dev/downjack/internal/utils"
 )
 
 var (

@@ -7,11 +7,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/chardoncs/downjack/internal/cli"
-	"github.com/chardoncs/downjack/internal/cli/ask"
-	"github.com/chardoncs/downjack/internal/cli/fuzzy"
-	lib "github.com/chardoncs/downjack/internal/licenses"
-	"github.com/chardoncs/downjack/internal/utils"
+	"go.chardoncs.dev/downjack/internal/cli"
+	"go.chardoncs.dev/downjack/internal/cli/ask"
+	"go.chardoncs.dev/downjack/internal/cli/fuzzy"
+	lib "go.chardoncs.dev/downjack/internal/licenses"
+	"go.chardoncs.dev/downjack/internal/utils"
 	"github.com/spf13/cobra"
 )
 
