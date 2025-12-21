@@ -5,8 +5,8 @@ import (
 	"sort"
 	"strings"
 
-	tea "github.com/charmbracelet/bubbletea/v2"
-	"github.com/charmbracelet/lipgloss/v2"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 	"github.com/lithammer/fuzzysearch/fuzzy"
 )
 
@@ -56,7 +56,7 @@ func (m listModel) Update(msg tea.Msg) (listModel, tea.Cmd) {
 	return m, nil
 }
 
-func (m listModel) View() string {
+func (m listModel) String() string {
 	renderedItems := make([]string, min(len(m.filteredOptions), listHeight))
 	// i is display index
 	for i := 0; i < listHeight && i < len(m.filteredOptions); i++ {
@@ -78,6 +78,12 @@ func (m listModel) View() string {
 			fmt.Sprintf("%d/%d", m.index+1, len(m.filteredOptions)),
 		),
 	)
+}
+
+func (m listModel) View() tea.View {
+	var v tea.View
+	v.SetContent(m.String())
+	return v
 }
 
 func (m listModel) SelectedItem() (string, bool) {

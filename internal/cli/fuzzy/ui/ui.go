@@ -1,9 +1,9 @@
 package ui
 
 import (
-	"github.com/charmbracelet/bubbles/v2/textinput"
-	tea "github.com/charmbracelet/bubbletea/v2"
-	"github.com/charmbracelet/lipgloss/v2"
+	"charm.land/bubbles/v2/textinput"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 )
 
 type MainModel struct {
@@ -43,13 +43,18 @@ func (m MainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, tea.Batch(inputCmd, listCmd)
 }
 
-func (m MainModel) View() string {
-	return lipgloss.JoinVertical(
+func (m MainModel) View() tea.View {
+	var v tea.View
+
+	content := lipgloss.JoinVertical(
 		lipgloss.Left,
 		titleStyle.Render(m.title),
 		m.inputModel.View(),
-		m.listModel.View(),
+		m.listModel.String(),
 	)
+
+	v.SetContent(content)
+	return v
 }
 
 func (m MainModel) SelectedItem() (string, bool) {
@@ -101,7 +106,7 @@ func InitialModel(title string, options []string, initialInput string) MainModel
 	im.ShowSuggestions = true
 	im.SetSuggestions(options)
 
-	im.VirtualCursor = true
+	im.SetVirtualCursor(true)
 
 	im.SetValue(initialInput)
 

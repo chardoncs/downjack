@@ -2,7 +2,7 @@ package fuzzy
 
 import (
 	"go.chardoncs.dev/downjack/internal/cli/fuzzy/ui"
-	tea "github.com/charmbracelet/bubbletea/v2"
+	tea "charm.land/bubbletea/v2"
 )
 
 // Fuzzy find from a bunch of options.
