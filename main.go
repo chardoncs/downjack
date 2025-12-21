@@ -4,9 +4,9 @@ import (
 	"context"
 	"os"
 
+	"github.com/charmbracelet/fang"
 	"go.chardoncs.dev/downjack/internal/cmd"
 	"go.chardoncs.dev/downjack/internal/version"
-	"github.com/charmbracelet/fang"
 )
 
 func main() {

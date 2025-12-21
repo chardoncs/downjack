@@ -1,8 +1,8 @@
 package fuzzy
 
 import (
-	"go.chardoncs.dev/downjack/internal/cli/fuzzy/ui"
 	tea "charm.land/bubbletea/v2"
+	"go.chardoncs.dev/downjack/internal/cli/fuzzy/ui"
 )
 
 // Fuzzy find from a bunch of options.

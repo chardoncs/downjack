@@ -1,9 +1,9 @@
 package cmd
 
 import (
+	"github.com/spf13/cobra"
 	"go.chardoncs.dev/downjack/internal/cmd/gitignore"
 	"go.chardoncs.dev/downjack/internal/cmd/license"
-	"github.com/spf13/cobra"
 )
 
 var RootCmd = &cobra.Command{

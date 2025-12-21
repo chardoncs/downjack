@@ -7,12 +7,12 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/spf13/cobra"
 	"go.chardoncs.dev/downjack/internal/cli"
 	"go.chardoncs.dev/downjack/internal/cli/ask"
 	"go.chardoncs.dev/downjack/internal/cli/fuzzy"
 	lib "go.chardoncs.dev/downjack/internal/licenses"
 	"go.chardoncs.dev/downjack/internal/utils"
-	"github.com/spf13/cobra"
 )
 
 var (
