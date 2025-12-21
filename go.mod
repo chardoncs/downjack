@@ -1,6 +1,6 @@
 module github.com/chardoncs/downjack
 
-go 1.25.1
+go 1.25.5
 
 require (
 	github.com/charmbracelet/bubbles/v2 v2.0.0-beta.1
