@@ -39,7 +39,7 @@ func SaveTo(dir string, content string, opts SaveToOptions) error {
 
 		if !empty {
 			// Add a blank line after the existing content
-			if _, err := writer.WriteString("\n\n"); err != nil {
+			if _, err := writer.WriteString("\n"); err != nil {
 				return err
 			}
 		}
@@ -54,6 +54,11 @@ func SaveTo(dir string, content string, opts SaveToOptions) error {
 
 	// Write new content
 	if _, err := writer.WriteString(content); err != nil {
+		return err
+	}
+
+	// Append blank line
+	if _, err := writer.WriteString("\n"); err != nil {
 		return err
 	}
 
