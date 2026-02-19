@@ -85,7 +85,7 @@ func (m MainModel) handleKeyBindings(msg tea.KeyPressMsg) (bool, listModel, tea.
 
 	case "ctrl+v":
 		downMsg = nextPageMsg{}
-	case "meta+v":
+	case "alt+v":
 		downMsg = prevPageMsg{}
 	}
 
