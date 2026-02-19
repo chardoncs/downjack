@@ -18,6 +18,10 @@ downjack g go
 downjack g
 ```
 
+> [!NOTE]
+>
+> The fuzzy finder supports basic Emacs key binds :)
+
 then create a license file with `MIT` license:
 
 ```bash
