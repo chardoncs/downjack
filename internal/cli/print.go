@@ -3,27 +3,37 @@ package cli
 import (
 	"fmt"
 
-	"github.com/fatih/color"
+	"charm.land/lipgloss/v2"
+)
+
+var (
+	infoStyle = lipgloss.NewStyle().Foreground(lipgloss.BrightCyan)
+	warnStyle = lipgloss.NewStyle().Foreground(lipgloss.BrightYellow)
+
+	infoArrow = infoStyle.Render(">>")
+	warnArrow = warnStyle.Render(">>")
+
+	warningText = warnStyle.Bold(true).Render("Warning:")
 )
 
 func Infof(format string, a ...any) {
-	fmt.Println(
-		color.CyanString(">>"),
+	lipgloss.Println(
+		infoArrow,
 		fmt.Sprintf(format, a...),
 	)
 }
 
 func Warnf(format string, a ...any) {
-	fmt.Println(
-		color.YellowString(">>"),
-		color.New(color.Bold).Sprint("Warning:"),
+	lipgloss.Println(
+		warnArrow,
+		warningText,
 		fmt.Sprintf(format, a...),
 	)
 }
 
 func InfoProgressf(format string, a ...any) {
-	fmt.Print(
-		color.CyanString(">>"),
+	lipgloss.Print(
+		infoArrow,
 		" ",
 		fmt.Sprintf(format, a...),
 		"... ",
