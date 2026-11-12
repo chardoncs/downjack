@@ -48,6 +48,7 @@
               <($out/bin/downjack completion zsh)
             installShellCompletion --fish --name downjack \
               <($out/bin/downjack completion fish)
+            installManPage ${./docs/downjack.1}
           '';
 
           meta = with pkgs.lib; {

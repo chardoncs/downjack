@@ -66,6 +66,7 @@ archives:
       - README*
       - LICENSE*
       - completions/*
+      - docs/downjack.1
 
 source:
   enabled: true
@@ -158,6 +159,8 @@ aur_sources:
     package: |-
       # bin
       install -Dm755 "./downjack" "${pkgdir}/usr/bin/downjack"
+      # man page
+      install -Dm644 "./docs/downjack.1" "${pkgdir}/usr/share/man/man1/downjack.1"
       # license
       mkdir -p "${pkgdir}/usr/share/licenses/downjack/"
       install -Dm644 ./LICENSE* "${pkgdir}/usr/share/licenses/downjack/"
@@ -199,6 +202,8 @@ aurs:
       cd "${srcdir}/downjack_Linux_${CARCH}"
       # bin
       install -Dm755 "./downjack" "${pkgdir}/usr/bin/downjack"
+      # man page
+      install -Dm644 "./docs/downjack.1" "${pkgdir}/usr/share/man/man1/downjack.1"
       # license
       mkdir -p "${pkgdir}/usr/share/licenses/downjack/"
       install -Dm644 ./LICENSE* "${pkgdir}/usr/share/licenses/downjack/"

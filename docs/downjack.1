@@ -1,0 +1,242 @@
+.\" SPDX-License-Identifier: MIT
+.\" Copyright (c) 2026 Charles Dong
+.\"
+.\" Man page for downjack(1).
+.TH DOWNJACK 1 "2026-11-12" "downjack" "General Commands Manual"
+.SH NAME
+downjack \- set up gitignore and license files like a lumberjack
+.SH SYNOPSIS
+.B downjack
+.I command
+.RI [ argument ]
+.br
+.B downjack gitignore
+.RI [ name ]
+.RB [ \-o ]
+.RB [ \-d
+.IR dir ]
+.br
+.B downjack license
+.RI [ name ]
+.RB [ \-f ]
+.RB [ \-d
+.IR dir ]
+.SH DESCRIPTION
+.B downjack
+writes the boilerplate files a fresh project needs: a
+.B .gitignore
+for the language or framework you work with, and an open source license file
+of your choice.
+.PP
+All templates are embedded in the binary, so
+.B downjack
+works offline and finishes in a blink.
+.PP
+Both subcommands take the template
+.I name
+as an optional argument.
+If the name matches exactly one template, that template is used right away;
+if the name is omitted, or is ambiguous, an interactive fuzzy finder is opened
+to pick one (see
+.BR "INTERACTIVE SELECTION" ).
+.SH COMMANDS
+.SS gitignore
+Create a
+.B .gitignore
+in the project, or append a snippet to the existing one.
+.PP
+The selected template is appended to the file, prefixed with a
+.B #-- \fIname\fP --#
+comment that records where the snippet came from, and separated from the
+previous content by a blank line.
+Template names are those of the
+.I github/gitignore
+collection (for example
+.BR Go ,
+.BR Python ,
+.BR Rust ,
+.BR Node ).
+.PP
+Aliases:
+.BR g ,
+.BR git ,
+.BR i ,
+.BR ignore .
+.TP
+\fB\-o\fP, \fB\-\-overwrite\fP
+Truncate
+.B .gitignore
+before writing, instead of appending to it.
+.B downjack
+asks for confirmation first.
+.TP
+\fB\-d\fP, \fB\-\-dir\fP=\fIdir\fP
+Operate on the ignore file in
+.I dir
+instead of the current directory.
+.SS license
+Write a license file for the project.
+.PP
+License identifiers follow the
+.I SPDX License List
+without the
+.B \-only
+and
+.B \-or\-later
+suffixes (for example
+.BR MIT ,
+.BR Apache\-2.0 ,
+.BR GPL\-3.0 ,
+.BR MPL\-2.0 ).
+Templates that carry placeholders are filled in with the current year and the
+copyright holder taken from
+.B "git config user.name" ;
+if that name cannot be determined, the literal placeholder
+.B <name>
+is written instead, to be replaced by hand.
+.PP
+The file is written as
+.B LICENSE
+for plain text templates, and as
+.B LICENSE.\fIext\fP
+for other formats (for example
+.BR LICENSE.md
+for
+.BR FSL\-1.1\-MIT ).
+.PP
+When the file already exists,
+.B downjack
+asks what to do: add a new file named
+.BR LICENSE\-\fIID\fP[.\fIext\fP] ,
+overwrite the existing file, or do nothing.
+.PP
+Alias:
+.BR l .
+.TP
+\fB\-f\fP, \fB\-\-force\fP
+Overwrite an existing license file without asking.
+.TP
+\fB\-d\fP, \fB\-\-dir\fP=\fIdir\fP
+Operate on the license file in
+.I dir
+instead of the current directory.
+.SS help
+Print help for
+.B downjack
+or for one of its subcommands.
+.SS completion
+Generate a shell completion script. The script is printed to standard output,
+so it has to be installed or sourced by your shell, for example:
+.PP
+.RS 4
+.nf
+downjack completion zsh > "${fpath[1]}/_downjack"
+.fi
+.RE
+.SH INTERACTIVE SELECTION
+Whenever a template has to be picked,
+.B downjack
+shows a searchable list. Typing narrows the list down by fuzzy matching.
+.TP
+.B Enter
+Select the highlighted template.
+.TP
+.B Ctrl\-P\fP, \fBUp\fP
+Move one item up.
+.TP
+.B Ctrl\-N\fP, \fBDown\fP
+Move one item down.
+.TP
+.B Ctrl\-V
+Move one page down.
+.TP
+.B Alt\-V
+Move one page up.
+.TP
+.B Ctrl\-C
+Cancel; no file is written.
+.SH GLOBAL OPTIONS
+.TP
+\fB\-h\fP, \fB\-\-help\fP
+Print help and exit.
+.TP
+\fB\-v\fP, \fB\-\-version\fP
+Print version information and exit.
+.SH EXIT STATUS
+.TP
+.B 0
+Success, including the case where the selection was cancelled or nothing was
+selected.
+.TP
+.B 1
+An error occurred, for example the argument count was wrong or a file could
+not be written.
+.SH FILES
+.TP
+.I ./.gitignore
+Ignore file written or extended by
+.BR "downjack gitignore" .
+.TP
+.I ./LICENSE
+License file written by
+.BR "downjack license" .
+.TP
+.I ./LICENSE.\fIext\fP
+License file written for a non\-plain\-text template, such as the Markdown
+edition of
+.BR FSL\-1.1\-MIT .
+.TP
+.I ./LICENSE-\fIID\fP[.\fIext\fP]
+Alternative names offered when the target file already exists.
+.SH EXAMPLES
+Set up a
+.B .gitignore
+for a Go project, then let the finder choose from every template:
+.PP
+.RS 4
+.nf
+downjack gitignore go
+downjack g
+.fi
+.RE
+.PP
+Add an MIT license, or pick one interactively:
+.PP
+.RS 4
+.nf
+downjack license mit
+downjack l
+.fi
+.RE
+.PP
+Prepare the files of a project that lives in another directory, overwriting
+whatever was there:
+.PP
+.RS 4
+.nf
+downjack g rust \-o \-d ./my\-crate
+downjack l apache\-2.0 \-f \-d ./my\-crate
+.fi
+.RE
+.PP
+Aliasing the tool to a shorter name is handy:
+.PP
+.RS 4
+.nf
+alias dj=downjack
+.fi
+.RE
+.SH SEE ALSO
+.BR git (1),
+.BR gitignore (5),
+.BR man (1)
+.PP
+The bundled gitignore templates come from
+.UR https://github.com/github/gitignore
+.UE .
+.SH BUGS
+Report bugs at
+.UR https://github.com/chardoncs/downjack/issues
+.UE .
+.SH AUTHOR
+Charles Dong <chardon_cs@proton.me>

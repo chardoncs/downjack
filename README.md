@@ -34,6 +34,14 @@ downjack l
 
 and that's it, your project is now ready to work with!
 
+## Documentation
+
+A man page is shipped with the binary:
+
+```bash
+man downjack
+```
+
 ## Install 
 
 > More installation methods are coming!
