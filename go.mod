@@ -7,7 +7,7 @@ require (
 	charm.land/bubbletea/v2 v2.1.1
 	charm.land/fang/v2 v2.0.1
 	charm.land/lipgloss/v2 v2.1.0
-	github.com/lithammer/fuzzysearch v1.1.8
+	github.com/sahilm/fuzzy v0.1.3
 	github.com/spf13/cobra v1.10.2
 )
 

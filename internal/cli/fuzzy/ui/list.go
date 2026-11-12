@@ -2,12 +2,11 @@ package ui
 
 import (
 	"fmt"
-	"sort"
 	"strings"
 
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
-	"github.com/lithammer/fuzzysearch/fuzzy"
+	"github.com/sahilm/fuzzy"
 )
 
 type listModel struct {
@@ -110,12 +109,11 @@ func (m *listModel) updateFilter(filter string, force bool) {
 
 	m.filter = trimmedFilter
 
-	ranks := fuzzy.RankFindFold(trimmedFilter, m.options)
-	sort.Sort(ranks)
+	matches := fuzzy.Find(trimmedFilter, m.options)
 
-	results := make([]string, len(ranks))
-	for i, rank := range ranks {
-		results[i] = rank.Target
+	results := make([]string, len(matches))
+	for i, rank := range matches {
+		results[i] = rank.Str
 	}
 
 	m.filteredOptions = results
